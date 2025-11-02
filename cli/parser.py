@@ -11,12 +11,19 @@ def get_args():
         type=Path,
         help="Path to the root directory of your ROMs collection."
     )
+    
+    parser.add_argument(
+        "--no-summary",
+        action="store_true",
+        dest="summary",
+        help="Disables summary generation"
+    )
 
     parser.add_argument(
-        "--no-delete",
-        action="store_false",
+        "--delete",
+        action="store_true",
         dest="delete",
-        help="Disables the duplicate deletion system"
+        help="Enables the duplicate deletion system. Will disable statistics generation if set."
     )
 
     parser.add_argument(

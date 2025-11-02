@@ -1,13 +1,6 @@
-from core.utils import get_folder_size
-
-from collections import defaultdict
-
+from core.utils import is_valid_subfolder
 
 def create_summary(path):
-    games_per_console = {}
-    gb_per_console = {}
-    game_and_consoles_names = defaultdict(list)
-    games = 0
     spaces = " " * 4
 
     print("Generating summary...\n")
@@ -22,21 +15,13 @@ def create_summary(path):
 
                 for sub in console.glob("*"):
 
-                    if sub.is_dir() and (sub.name == "Single-Disk" or sub.name == "Multi-Disk"):
+                    if sub.is_dir() and is_valid_subfolder(sub.name):
                         f.write(f"{spaces}Subfolder: {sub.name}\n")
                         for game in sub.glob("*"):
                             f.write(f"{spaces * 2}{game.stem}\n")
-                            game_and_consoles_names[game.stem.lower().strip()].append(console.name)
-                            games += 1
                     else:
                         f.write(f"{spaces}{sub.stem}\n")
-                        game_and_consoles_names[sub.stem.lower().strip()].append(console.name)
-                        games += 1
-
-                gb_per_console[f"{console.name}"] = get_folder_size(console)
-                games_per_console[f"{console.name}"] = games
-                games = 0
         print()
 
-    return games_per_console, gb_per_console, game_and_consoles_names
+    print("Summary file 'summary.txt' created successfully.")
 

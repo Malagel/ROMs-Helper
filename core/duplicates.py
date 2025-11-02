@@ -49,3 +49,5 @@ def delete_duplicates(path, game_names):
 
         print("No games to delete")
         input("Press enter to continue")
+    
+    print("Duplicate removal process completed.")
