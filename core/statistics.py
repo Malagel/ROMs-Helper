@@ -1,10 +1,14 @@
-def create_statistics(games_per_console, gigabytes_per_console, game_names):
+def create_statistics(data):
+    games_per_console = data["games_per_console"]
+    gb_per_console = data["gb_per_console"]
+    games_and_consoles = data["games_and_consoles"]
+
     with open("statistics.txt", "w") as f:
-        duplicates = {game: consoles for game, consoles in game_names.items() if len(consoles) > 1}
+        duplicates = {game: consoles for game, consoles in games_and_consoles.items() if len(consoles) > 1}
 
         f.write("\n\n========== STATISTICS ==========\n\n")
         f.write(f"Total Games: {sum(games_per_console.values())}\n")
-        f.write(f"Total Size: {sum(gigabytes_per_console.values())} GB\n")
+        f.write(f"Total Size: {sum(gb_per_console.values())} GB\n")
         f.write(f"Consoles Analyzed: {len(games_per_console)}\n")
 
         if duplicates:
@@ -17,7 +21,7 @@ def create_statistics(games_per_console, gigabytes_per_console, game_names):
             f.write(f"{i}) {console}: {games} games\n")
 
         f.write(f"\n\nStorage used per console in descending order:\n\n")
-        for i, (console, size) in enumerate(sorted(gigabytes_per_console.items(), key=lambda x: x[1], reverse=True), start=1):
+        for i, (console, size) in enumerate(sorted(gb_per_console.items(), key=lambda x: x[1], reverse=True), start=1):
             f.write(f"{i}) {console}: {size} GB\n")
 
         if duplicates:

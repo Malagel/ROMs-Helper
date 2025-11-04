@@ -13,16 +13,17 @@ def main():
         print("The provided path is not a valid directory.")
         return
 
+    data = get_roms_data(path)
+
+    if args.delete:
+        delete_duplicates(path, data["game_and_console_names"])
+
     if args.summary:
         create_summary(path)
 
     if args.statistics:
-        data = get_roms_data(path, {"games_per_console", "gb_per_console", "game_and_console_names"})
-        create_statistics(data["games_per_console"], data["gb_per_console"], data["game_and_console_names"])
+        create_statistics(data)
 
-    if args.delete:
-        data = get_roms_data(path, {"game_and_console_names"})
-        delete_duplicates(path, data["game_and_console_names"])
 
 if __name__ == "__main__":
     main()

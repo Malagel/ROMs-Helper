@@ -1,24 +1,31 @@
-from core.utils import get_games_per_console, gb_per_console, game_and_console_names
+from core.utils import is_valid_subfolder
+from collections import defaultdict
 
-def get_roms_data(path, options):
-    VALID_OPTIONS = {
-        "games_per_console",
-        "gb_per_console", 
-        "game_and_console_names"}
-    
-    invalid = options - VALID_OPTIONS
-    if invalid:
-        raise ValueError(f"Invalid options: {', '.join(invalid)}")
-    
-    data = {}
+def get_roms_data(path):
+    gb_per_console = {}
+    games_per_console = defaultdict(int)
+    games_and_consoles = defaultdict(list)
 
-    if "games_per_console" in options:
-        data["games_per_console"] = get_games_per_console(path)
+    for console in path.glob("*"):
+        if not console.is_dir(): continue
 
-    if "gb_per_console" in options:
-        data["gb_per_console"] = gb_per_console(path)
+        gb_per_console[console.name] = get_folder_size(console)
 
-    if "game_and_console_names" in options:
-        data["game_and_console_names"] = game_and_console_names(path)
+        for sub in console.glob("*"):
+            if sub.is_dir() and is_valid_subfolder(sub.name):
+                for game in sub.glob("*"):
 
-    return data
+                    games_per_console[console.name] += 1
+                    games_and_consoles[(game.stem).lower().strip()].append(console.name)
+
+            else:
+
+                    games_per_console[console.name] += 1
+                    games_and_consoles[(sub.stem).lower().strip()].append(console.name)
+
+    return {
+            "gb_per_console": gb_per_console,
+            "games_per_console": games_per_console,
+            "games_and_consoles": games_and_consoles          
+    }
+
