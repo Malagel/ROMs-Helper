@@ -1,4 +1,4 @@
-from core.utils import is_valid_subfolder
+from core.utils import is_valid_subfolder, get_folder_size
 from collections import defaultdict
 
 def get_roms_data(path):
@@ -11,6 +11,7 @@ def get_roms_data(path):
 
         gb_per_console[console.name] = get_folder_size(console)
 
+        # Get through all files inside console folders
         for sub in console.glob("*"):
             if sub.is_dir() and is_valid_subfolder(sub.name):
                 for game in sub.glob("*"):
