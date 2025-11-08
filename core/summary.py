@@ -8,10 +8,9 @@ def create_summary(path):
     with open("summary.txt", "w") as f:
 
         for console in path.glob("*"): 
-            print(f"Processing: {console.name}", end="\r", flush=True)
 
             if console.is_dir():
-                f.write(f"======== {console.name} ========\n")
+                f.write(f"================= {console.name} =================\n")
 
                 for sub in console.glob("*"):
 

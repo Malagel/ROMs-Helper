@@ -3,7 +3,7 @@ from pathlib import Path
 
 def get_args():
     parser = argparse.ArgumentParser(
-        description="Create a summary of your ROMs collection with statistics and manage duplicates."
+        description="Create a summary of your ROMs collection with statistics and manage your files with useful tools."
     )
     
     parser.add_argument(
@@ -14,16 +14,23 @@ def get_args():
     
     parser.add_argument(
         "--no-summary",
-        action="store_true",
+        action="store_false",
         dest="summary",
         help="Disables summary generation"
     )
 
     parser.add_argument(
-        "--delete",
+        "--delete-duplicates",
         action="store_true",
-        dest="delete",
-        help="Enables the duplicate deletion system. Will disable statistics generation if set."
+        dest="deleteDuplicates",
+        help="Enables the duplicate deletion system."
+    )
+
+    parser.add_argument(
+        "--delete-tags",
+        action="store_true",
+        dest="deleteTags",
+        help="Deletes specified tags from game filenames across the collection. (e.g., '(USA)', '(Europe)', ...)"
     )
 
     parser.add_argument(
@@ -32,5 +39,12 @@ def get_args():
         dest="statistics",
         help="Disables the statistics generation"
     )
+
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="ROMs Helper 1.0.0"
+    )
+
 
     return parser.parse_args()
