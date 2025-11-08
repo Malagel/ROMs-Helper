@@ -20,7 +20,6 @@ def create_summary(path):
                             f.write(f"{spaces * 2}{game.stem}\n")
                     else:
                         f.write(f"{spaces}{sub.stem}\n")
-        print()
 
     print("Summary file 'summary.txt' created successfully.")
 

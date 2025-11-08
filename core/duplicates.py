@@ -30,24 +30,28 @@ def delete_duplicates(path, game_names):
             continue
         
         if games_to_delete_paths:
-            print("These game paths will be deleted:")
+            print("\nThese game paths will be deleted:")
             for game_path in games_to_delete_paths:
                 print(game_path)
             
-            answer = input("\nDo you confirm? (yes/no)").lower().strip()
+            answer = input("\nDo you confirm? (yes/no) ").lower().strip()
             if answer == "yes":            
                 for game_path in games_to_delete_paths:
-    #                if game_path.is_dir():
-    #                    shutil.rmtree(game_path)
-    #                else:
-    #                    game_path.unlink()
-                    print(f"Deleted: {game_path}")
+                    if game_path.is_dir():
+                        shutil.rmtree(game_path)
+                    else:
+                        game_path.unlink()
 
                 print(f"\nDeleted {len(games_to_delete_paths)} instances of {game.title()}")
-                input("Press enter to continue")
+                a = input("Press enter to continue or 'quit' to exit ")
+                if a == 'quit':
+                    break
+
                 continue
 
         print("No games to delete")
-        input("Press enter to continue")
+        a = input("Press enter to continue or 'quit' to exit")
+        if a == 'quit':
+            break
     
-    print("Duplicate removal process completed.")
+    print("\nDuplicate removal process completed.")

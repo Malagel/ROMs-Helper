@@ -6,7 +6,7 @@ def create_statistics(data):
     with open("statistics.txt", "w") as f:
         duplicates = {game: consoles for game, consoles in games_and_consoles.items() if len(consoles) > 1}
 
-        f.write("\n\n========== STATISTICS ==========\n\n")
+        f.write("========== STATISTICS ==========\n\n")
         f.write(f"Total Games: {sum(games_per_console.values())}\n")
         f.write(f"Total Size: {sum(gb_per_console.values())} GB\n")
         f.write(f"Consoles Analyzed: {len(games_per_console)}\n")

@@ -16,7 +16,7 @@ def main():
     data = get_roms_data(path)
 
     if args.deleteDuplicates:
-        delete_duplicates(path, data["game_and_console_names"])
+        delete_duplicates(path, data["games_and_consoles"])
 
     if args.summary:
         create_summary(path)

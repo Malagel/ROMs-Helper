@@ -27,7 +27,7 @@ structure = {
 }
 
 def main():
-    create_structure("/home/Arch/Proyects/ROMs-Helper/", structure)
+    create_structure("/home/nick/projects/ROMs-Helper/tests", structure)
 
 
 if __name__ == "__main__":
