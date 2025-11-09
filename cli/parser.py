@@ -11,6 +11,12 @@ def get_args():
         type=Path,
         help="Path to the root directory of your ROMs collection."
     )
+
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Disables security confirmation for options that require it. Useful if you are sure of what you are doing."
+    )
     
     parser.add_argument(
         "--no-summary",
@@ -27,10 +33,11 @@ def get_args():
     )
 
     parser.add_argument(
-        "--delete-tags",
+        "--rename-games",
         action="store_true",
-        dest="deleteTags",
-        help="Deletes specified tags from game filenames across the collection. (e.g., '(USA)', '(Europe)', ...)"
+        dest="renameGames",
+        help="""Renames each game in your collection by deleting specified tags (e.g., '(USA)', '(Europe)', ...) and
+        cleans the filename"""
     )
 
     parser.add_argument(
