@@ -19,11 +19,11 @@ def main() -> None:
     if args.logs: log(f"\n===== BEGINNING OF LOGGING =====\n")
     data = get_roms_data(path, args.logs)
 
-    if args.deleteDuplicates:
-        delete_duplicates(path, data["games_and_consoles"], args.force, args.logs)
-
     if args.renameGames:
         rename_games(path, args.logs)
+
+    if args.deleteDuplicates:
+        delete_duplicates(path, data["games_and_consoles"], args.force, args.logs)
 
     if args.summary:
         create_summary(path, args.logs)
