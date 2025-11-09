@@ -1,7 +1,12 @@
-def create_statistics(data: dict[str, dict]) -> None:
+from core.utils import log
+
+
+def create_statistics(data: dict[str, dict], logs: bool) -> None:
     games_per_console = data["games_per_console"]
     gb_per_console = data["gb_per_console"]
     games_and_consoles = data["games_and_consoles"]
+
+    if logs: log(f"[STATISTICS TOOL]: Starting computation of data.")
 
     with open("statistics.txt", "w") as f:
         duplicates = {game: consoles for game, consoles in games_and_consoles.items() if len(consoles) > 1}
@@ -28,4 +33,6 @@ def create_statistics(data: dict[str, dict]) -> None:
             f.write(f"\n\nDuplicates across consoles with identical name:\n\n")
             for game, consoles in duplicates.items():
                 f.write(f"- {game.title()} -> {', '.join(sorted(consoles))}\n")
+    
+    if logs: log(f"[STATISTICS TOOL]: Statistics created and saved on 'statistics.txt'.")
         

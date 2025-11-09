@@ -13,6 +13,12 @@ def get_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--logs",
+        action="store_true",
+        help="Keeps track of all interactions with the program and saves it to a log file."
+    )
+    
+    parser.add_argument(
         "--force",
         action="store_true",
         help="Disables security confirmation for options that require it. Useful if you are sure of what you are doing."

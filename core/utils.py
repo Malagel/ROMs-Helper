@@ -1,9 +1,16 @@
 from pathlib import Path
+from datetime import datetime
 import os
 import re
 
+
 def clear() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
+
+
+def log(msg: str) -> None:
+    with open("logs.txt", "a") as f:
+        f.write(f"\n{msg}")
 
 
 def prompt_continue() -> bool:
@@ -24,12 +31,6 @@ def is_valid_subfolder(name: str) -> bool:
     return normalized in ("single disk", "multi disk")
 
 
-def clean_string(string: str) -> str:
-    string = re.sub(r"\s*\([^)]*\)", '', string)
-    string = re.sub(r"[-_]+", ' ', string)
-    string = re.sub(r"v\d+(\.\d+)*", '', string)
-
-    return string.strip()
 
 
 
