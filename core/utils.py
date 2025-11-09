@@ -14,7 +14,7 @@ def log(msg: str) -> None:
 
 
 def prompt_continue() -> bool:
-    return input("Press enter to continue or 'quit' to exit").strip().lower() != "quit"
+    return input("\nPress enter to continue or type 'quit' to exit: ").strip().lower() != "quit"
 
 
 def get_folder_size(folder_path: Path) -> float:

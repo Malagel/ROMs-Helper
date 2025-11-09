@@ -61,6 +61,7 @@ def delete_duplicates(path: Path, games_and_consoles: dict[str, list[str]], forc
         
         if choice == "skip":
             if logs: log(f"[DELETE TOOL]: Skipping {game} by user.")
+            print("Skipping...")
 
             if not prompt_continue():
                 break

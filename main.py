@@ -13,11 +13,11 @@ def main() -> None:
 
     path = args.path
     if not path.is_dir():
-        print("The provided path is not a valid directory.")
+        print("ERROR: The provided path is not a valid directory.")
         return
 
-    data = get_roms_data(path, args.logs)
     if args.logs: log(f"\n===== BEGINNING OF LOGGING =====\n")
+    data = get_roms_data(path, args.logs)
 
     if args.deleteDuplicates:
         delete_duplicates(path, data["games_and_consoles"], args.force, args.logs)

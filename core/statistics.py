@@ -8,6 +8,7 @@ def create_statistics(data: dict[str, dict], logs: bool) -> None:
 
     if logs: log(f"[STATISTICS TOOL]: Starting computation of data.")
 
+    print("Creating statistics from your collection... ", end="")
     with open("statistics.txt", "w") as f:
         duplicates = {game: consoles for game, consoles in games_and_consoles.items() if len(consoles) > 1}
 
@@ -34,5 +35,6 @@ def create_statistics(data: dict[str, dict], logs: bool) -> None:
             for game, consoles in duplicates.items():
                 f.write(f"- {game.title()} -> {', '.join(sorted(consoles))}\n")
     
+    print("DONE")
     if logs: log(f"[STATISTICS TOOL]: Statistics created and saved on 'statistics.txt'.")
-        
+    
