@@ -1,6 +1,7 @@
 from core.utils import is_valid_subfolder, clean_string
+from pathlib import Path
 
-def rename_games(path):
+def rename_games(path: Path) -> None:
     print("Renaming all your gamefiles...")
     for console in path.glob("*"): 
         if not console.is_dir(): continue

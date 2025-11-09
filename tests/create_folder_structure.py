@@ -26,7 +26,7 @@ structure = {
     }
 }
 
-def main():
+def main() -> None:
     create_structure("/home/nick/projects/ROMs-Helper/tests", structure)
 
 

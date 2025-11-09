@@ -1,4 +1,4 @@
-def create_statistics(data):
+def create_statistics(data: dict[str, dict]) -> None:
     games_per_console = data["games_per_console"]
     gb_per_console = data["gb_per_console"]
     games_and_consoles = data["games_and_consoles"]

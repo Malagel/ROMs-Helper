@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-def get_args():
+def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Create a summary of your ROMs collection with statistics and manage your files with useful tools."
     )

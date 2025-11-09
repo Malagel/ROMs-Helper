@@ -6,7 +6,7 @@ from core.summary import create_summary
 from cli.parser import get_args
 
 
-def main():
+def main() -> None:
     args = get_args()
 
     path = args.path

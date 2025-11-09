@@ -1,7 +1,8 @@
 from core.utils import is_valid_subfolder, get_folder_size
 from collections import defaultdict
+from pathlib import Path
 
-def get_roms_data(path):
+def get_roms_data(path: Path) -> dict[str, dict]:
     gb_per_console = {}
     games_per_console = defaultdict(int)
     games_and_consoles = defaultdict(list)

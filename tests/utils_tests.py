@@ -1,7 +1,7 @@
 import random
 from pathlib import Path
 
-def write_dummy_file(base_path, number):
+def write_dummy_file(base_path: Path, number: int) -> None:
     size_mb = random.randint(1, 50)
     extensions = ["iso", "bin", "txt", "nsp", "txt", "chd"]
     path = base_path / f"file_{number:03d}.{random.choice(extensions)}"
@@ -10,7 +10,7 @@ def write_dummy_file(base_path, number):
         f.truncate(size_mb * (1024 ** 2))
 
 
-def create_structure(base_path, structure):
+def create_structure(base_path: str, structure: dict) -> None:
     for name, content in structure.items():
         current = Path(base_path) / name
         current.mkdir()
