@@ -32,12 +32,19 @@ def get_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--delete-duplicates",
-        action="store_true",
-        dest="deleteDuplicates",
-        help="Enables the duplicate deletion system."
+        "--delete-similars",
+        nargs="?",
+        choices=["exact", "close", "fuzzy"],
+        const="exact",
+        dest="delete",
+        help="""Enables the similar deletion system. It detects similar game-names within a threshold so you\n 
+        can decide to keep them or not.
+        The threshold options are added after '--delete-similars', and are: \n
+            1) 'exact' : this will stage for deletion ONLY the game-files that are exactly equal (not case sensitive)\n
+            2) 'close' : games with similar names will be staged, useful if you want to check different versions of games or sagas\n
+            3) 'fuzzy' : the least useful, just if you want to see all relations between your games"""
     )
-
+    
     parser.add_argument(
         "--rename-games",
         action="store_true",

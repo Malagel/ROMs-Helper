@@ -25,12 +25,13 @@ def get_roms_data(path: Path, logs: bool) -> dict[str, dict]:
                 for game in sub.glob("*"):
 
                     games_per_console[console.name] += 1
-                    games_and_consoles[(game.stem).lower().strip()].append(console.name)
+                    games_and_consoles[game.stem].append(console.name)
 
             else:
-
-                    games_per_console[console.name] += 1
-                    games_and_consoles[(sub.stem).lower().strip()].append(console.name)
+                
+                games_per_console[console.name] += 1
+                games_and_consoles[sub.stem].append(console.name)
+                
         if logs:
             log(f"[DATA COLLECTOR]: Folder size of {console.name} = {gb_per_console[console.name]}")
             log(f"[DATA COLLECTOR]: Found {games_per_console[console.name]} games in {console.name}") 

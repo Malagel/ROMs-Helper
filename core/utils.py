@@ -1,16 +1,24 @@
 from pathlib import Path
-from datetime import datetime
-import os
 import re
+import os
 
 
-def clear() -> None:
+def normalize(string: str, lower=False) -> str:
+    string = re.sub(r"\s*\([^)]*\)", '', string)
+    string = re.sub(r"[_]+", ' ', string)
+    string = re.sub(r"v\d+(\.\d+)*", '', string)
+
+    if lower: return string.strip().lower()
+    
+    return string.strip()
+
+def clear_console() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def log(msg: str) -> None:
     with open("logs.txt", "a") as f:
-        f.write(f"\n{msg}")
+        f.write(f"\n{msg}") 
 
 
 def prompt_continue() -> bool:

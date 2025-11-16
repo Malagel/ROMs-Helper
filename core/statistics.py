@@ -33,7 +33,7 @@ def create_statistics(data: dict[str, dict], logs: bool) -> None:
         if duplicates:
             f.write(f"\n\nDuplicates across consoles with identical name:\n\n")
             for game, consoles in duplicates.items():
-                f.write(f"- {game.title()} -> {', '.join(sorted(consoles))}\n")
+                f.write(f"- {game} -> {', '.join(sorted(consoles))}\n")
     
     print("DONE")
     if logs: log(f"[STATISTICS TOOL]: Statistics created and saved on 'statistics.txt'.")

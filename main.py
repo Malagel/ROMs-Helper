@@ -1,6 +1,6 @@
 from core.data import get_roms_data
 from core.statistics import create_statistics
-from core.duplicates import delete_duplicates
+from core.similar import delete_similar
 from core.rename import rename_games
 from core.summary import create_summary
 from core.utils import log
@@ -17,13 +17,15 @@ def main() -> None:
         return
 
     if args.logs: log(f"\n===== BEGINNING OF LOGGING =====\n")
-    data = get_roms_data(path, args.logs)
 
     if args.renameGames:
         rename_games(path, args.logs)
 
-    if args.deleteDuplicates:
-        delete_duplicates(path, data["games_and_consoles"], args.force, args.logs)
+    if args.delete:
+        data = get_roms_data(path, args.logs)
+        delete_similar(path, data["games_and_consoles"], args.force, args.logs, args.delete)
+
+    data = get_roms_data(path, args.logs)
 
     if args.summary:
         create_summary(path, args.logs)

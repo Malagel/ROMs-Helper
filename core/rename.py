@@ -1,19 +1,11 @@
-from core.utils import is_valid_subfolder, log
+from core.utils import is_valid_subfolder, log, normalize
 from pathlib import Path
 import re
 
 
-def clean_string(string: str) -> str:
-    string = re.sub(r"\s*\([^)]*\)", '', string)
-    string = re.sub(r"[_]+", ' ', string)
-    string = re.sub(r"v\d+(\.\d+)*", '', string)
-
-    return string.strip()
-
-
 def rename_file(file: Path, logs: bool) -> None:
     old_name = file.name
-    new_name = file.with_name(clean_string(file.name))
+    new_name = file.with_name(normalize(file.name))
 
     if old_name != new_name.name:
         try:
