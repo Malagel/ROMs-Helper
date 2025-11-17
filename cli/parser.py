@@ -32,6 +32,13 @@ def get_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--no-statistics",
+        action="store_false",
+        dest="statistics",
+        help="Disables the statistics generation"
+    )
+
+    parser.add_argument(
         "--delete-similars",
         nargs="?",
         choices=["exact", "close", "fuzzy"],
@@ -53,18 +60,11 @@ def get_args() -> argparse.Namespace:
         cleans the filename"""
     )
 
-    parser.add_argument(
-        "--no-statistics",
-        action="store_false",
-        dest="statistics",
-        help="Disables the statistics generation"
-    )
 
     parser.add_argument(
         "--version",
         action="version",
         version="ROMs Helper 1.0.0"
     )
-
 
     return parser.parse_args()

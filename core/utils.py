@@ -18,7 +18,7 @@ def clear_console() -> None:
 
 def log(msg: str) -> None:
     with open("logs.txt", "a") as f:
-        f.write(f"\n{msg}") 
+        f.write(f"{msg}\n") 
 
 
 def prompt_continue() -> bool:

@@ -16,7 +16,7 @@ def main() -> None:
         print("ERROR: The provided path is not a valid directory.")
         return
 
-    if args.logs: log(f"\n===== BEGINNING OF LOGGING =====\n")
+    if args.logs: log(f"===== BEGINNING OF LOGGING =====\n")
 
     if args.renameGames:
         rename_games(path, args.logs)
@@ -25,12 +25,11 @@ def main() -> None:
         data = get_roms_data(path, args.logs)
         delete_similar(path, data["games_and_consoles"], args.force, args.logs, args.delete)
 
-    data = get_roms_data(path, args.logs)
-
     if args.summary:
         create_summary(path, args.logs)
 
     if args.statistics:
+        data = get_roms_data(path, args.logs)
         create_statistics(data, args.logs)
 
 

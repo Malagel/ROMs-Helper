@@ -4,8 +4,8 @@ import shutil
 from core.utils import normalize, log, clear_console, prompt_continue
 
 
-def tokenize(name: str) -> set[str]:
-    return {w for w in normalize(name).split() if len(w) >= 3}
+def tokenize(name: str) -> list[str]:
+    return [w for w in normalize(name).split() if len(w) >= 3]
 
 
 def similar(a: str, b:str, threshold: float) -> bool:
@@ -36,6 +36,7 @@ def get_game_paths(path: Path, game_console_pairs: list[tuple[str, str]]) -> lis
 
     return paths
 
+
 def confirm_delete(game_paths: list[Path], force: bool) -> bool:
     if not force:
         print("\nThese game paths will be deleted permanently:")
@@ -52,6 +53,7 @@ def build_edges(games: list[str], logs: bool, threshold: float) -> dict[str, set
 
     for i in range(len(games)):
         for j in range(i + 1, len(games)):
+            fix = 0
             a = games[i]
             b = games[j]
 
@@ -61,16 +63,34 @@ def build_edges(games: list[str], logs: bool, threshold: float) -> dict[str, set
                     edges[b].add(a)
                 continue
 
-            if tokens[a].isdisjoint(tokens[b]): continue
-
-            if similar(normalized[a], normalized[b], threshold):
+            prefix_matches = 0
+            for ta, tb in zip(tokens[a], tokens[b]):
+                if ta == tb:
+                    prefix_matches += 1
+                else:
+                    break
+            
+            if prefix_matches >= 3:
                 edges[a].add(b)
                 edges[b].add(a)
+                continue
 
+            if prefix_matches >= 2:
+                fix = 0.05
 
+            if prefix_matches == 1:
+                fix = 0.025
+
+            if set(tokens[a]).isdisjoint(set(tokens[b])):
+                continue
+
+            if similar(normalized[a], normalized[b], threshold - fix):
+                edges[a].add(b)
+                edges[b].add(a)
+            
     if logs: 
         for game, similars in edges.items():
-            log(f"[EDGES]: {game} = {similars}")
+            log(f"[EDGES]: {game} -> {similars}")
 
     return edges
 
@@ -108,7 +128,7 @@ def get_similar_games(games_and_consoles: dict[str, list[str]], logs: bool, thre
 
 
 def delete_similar(path: Path, games_and_consoles: dict[str, list[str]], force: bool, logs: bool, threshold: str) -> None:
-    threshold_map = {"exact": 1.0, "close": 0.75, "fuzzy": 0.65}
+    threshold_map = {"exact": 1.0, "close": 0.82, "fuzzy": 0.70}
 
     print("Building similar games...")
     clusters = get_similar_games(games_and_consoles, logs, threshold_map[threshold])
@@ -126,7 +146,8 @@ def delete_similar(path: Path, games_and_consoles: dict[str, list[str]], force: 
                 "\nFrom which console numbers you wish to eliminate the game? "
                 "(comma-separated, 'skip' if unsure): "
                 ).strip().lower()
-        
+            if choice == 'skip': break
+
             try: 
                 indices = [int(i.strip()) - 1 for i in choice.split(",")]
                 games_to_delete = [cluster[idx] for idx in indices]
@@ -135,12 +156,15 @@ def delete_similar(path: Path, games_and_consoles: dict[str, list[str]], force: 
                 print(f"[WARNING]: Incorrect input of console numbers. {e}\n")
                 continue
             break
+        if choice == 'skip':
+            if not prompt_continue():
+                break 
+            continue
         
         if confirm_delete(game_paths, force): delete_game_paths(game_paths, logs)
         if not prompt_continue(): break
     
-    print("Deletion finalized. Press enter to exit")
-    input()
+    print("Deletion finalized.")
 
 
 
