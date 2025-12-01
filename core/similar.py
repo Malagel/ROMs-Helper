@@ -128,7 +128,7 @@ def get_similar_games(games_and_consoles: dict[str, list[str]], logs: bool, thre
 
 
 def delete_similar(path: Path, games_and_consoles: dict[str, list[str]], force: bool, logs: bool, threshold: str) -> None:
-    threshold_map = {"exact": 1.0, "close": 0.82, "fuzzy": 0.70}
+    threshold_map = {"identical": 1.0, "franchises": 0}
 
     print("Building similar games...")
     clusters = get_similar_games(games_and_consoles, logs, threshold_map[threshold])
@@ -156,12 +156,15 @@ def delete_similar(path: Path, games_and_consoles: dict[str, list[str]], force: 
                 print(f"[WARNING]: Incorrect input of console numbers. {e}\n")
                 continue
             break
+
         if choice == 'skip':
             if not prompt_continue():
                 break 
             continue
         
-        if confirm_delete(game_paths, force): delete_game_paths(game_paths, logs)
+        if confirm_delete(game_paths, force): 
+            delete_game_paths(game_paths, logs)
+            
         if not prompt_continue(): break
     
     print("Deletion finalized.")

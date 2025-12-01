@@ -8,8 +8,8 @@ def normalize(string: str, lower=False) -> str:
     string = re.sub(r"[_]+", ' ', string)
     string = re.sub(r"v\d+(\.\d+)*", '', string)
 
-    if lower: return string.strip().lower()
-    
+    if lower: string = string.lower()
+
     return string.strip()
 
 def clear_console() -> None:
