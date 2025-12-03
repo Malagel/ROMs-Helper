@@ -1,6 +1,5 @@
 from core.utils import is_valid_subfolder, log, normalize
 from pathlib import Path
-import re
 
 
 def rename_file(file: Path, logs: bool) -> None:
@@ -17,7 +16,7 @@ def rename_file(file: Path, logs: bool) -> None:
 
 
 def rename_games(path: Path, logs: bool) -> None:
-    print("Renaming all your gamefiles... ", end="")
+    print("Renaming all your gamefiles... ", end="", flush=True)
     for console in path.glob("*"): 
         if not console.is_dir(): continue
 
