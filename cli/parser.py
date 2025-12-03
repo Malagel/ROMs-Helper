@@ -39,16 +39,16 @@ def get_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--delete-similars",
+        "--delete-duplicates",
         nargs="?",
-        choices=["identical", "franchises"],
+        choices=["identical", "similar"],
         const="identical",
         dest="delete",
         help="""Enables the similar deletion system. It detects similar game-names within a threshold so you\n 
         can decide to keep them or not.
         The threshold options are added after '--delete-similars', and are: \n
             1) 'identical' : this will stage for deletion ONLY the game-files that are almost exactly equal, basically the same games\n
-            2) 'franchises' : games with similar names will be staged, useful if you want to check different versions of games or sagas\n"""
+            2) 'similar' : games with similar names will be staged, useful if you want to check different versions of games or sagas\n"""
     )
     
     parser.add_argument(
