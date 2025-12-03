@@ -5,7 +5,7 @@ from pathlib import Path
 def create_summary(path: Path, logs: bool) -> None:
     spaces = " " * 4
 
-    print("Generating summary... ", end="")
+    print("Generating summary... ", end="", flush=True)
     if logs: log(f"[SUMMARY TOOL]: Generating summary from {path}")
 
     with open("summary.txt", "w") as f:
