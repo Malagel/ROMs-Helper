@@ -1,6 +1,20 @@
-from core.utils import is_valid_subfolder, get_folder_size, log
+from core.utils import is_valid_subfolder, get_folder_size_gb, get_file_size_mb, log, normalize
 from collections import defaultdict
 from pathlib import Path
+
+def add_game_data(games_data: dict[int, dict], game: Path, console: Path, logs: bool, identifier: int) -> None:
+        games_data[identifier] = {
+            "original_name": game.stem,
+            "path": game,
+            "normalized_name": normalize(game.stem, full_clean=True),
+            "metadata": {
+                "console": console.name,
+                "size": get_file_size_mb(game)
+            }
+        }
+
+        if logs:
+            log(f"[DATA COLLECTOR]: {games_data[identifier]} ")
 
 
 def get_roms_data(path: Path, logs: bool) -> dict[str, dict]:
@@ -8,8 +22,10 @@ def get_roms_data(path: Path, logs: bool) -> dict[str, dict]:
 
     gb_per_console = {}
     games_per_console = defaultdict(int)
-    games_and_consoles = defaultdict(list)
+    games_data = {}
+    identifier = 0
 
+    print(f"Getting your ROMs data from {path}... ", end="", flush=True)
     for console in path.glob("*"):
         if not console.is_dir(): 
             if logs: log(f"[DATA COLLECTOR]: Ignoring non-directory item {console.name}")
@@ -17,30 +33,36 @@ def get_roms_data(path: Path, logs: bool) -> dict[str, dict]:
 
         if logs: log(f"[DATA COLLECTOR]: Scanning console {console.name}")
 
-        gb_per_console[console.name] = get_folder_size(console)
+        gb_per_console[console.name] = get_folder_size_gb(console)
 
         # Get through all files inside console folders
         for sub in console.glob("*"):
             if sub.is_dir() and is_valid_subfolder(sub.name):
                 for game in sub.glob("*"):
 
+                    # Inside single or multidisk
                     games_per_console[console.name] += 1
-                    games_and_consoles[game.stem].append(console.name)
+                    add_game_data(games_data, game, console, logs, identifier)
+                    identifier += 1
 
             else:
-                
+        
+                # Inside the original folders
                 games_per_console[console.name] += 1
-                games_and_consoles[sub.stem].append(console.name)
-                
+                add_game_data(games_data, sub, console, logs, identifier)
+                identifier += 1
+
+
         if logs:
             log(f"[DATA COLLECTOR]: Folder size of {console.name} = {gb_per_console[console.name]}")
             log(f"[DATA COLLECTOR]: Found {games_per_console[console.name]} games in {console.name}") 
     
     if logs: log(f"[DATA COLLECTOR]: Collection of data finalized - {len(gb_per_console)} consoles processed")
 
+    print("DONE")
     return {
             "gb_per_console": gb_per_console,
             "games_per_console": games_per_console,
-            "games_and_consoles": games_and_consoles          
+            "games_data": games_data          
     }
 
