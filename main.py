@@ -1,10 +1,10 @@
-from core.data import get_roms_data
 from core.statistics import create_statistics
 from core.duplicates import delete_similar
-from core.rename import rename_games
 from core.summary import create_summary
-from core.utils import log
+from core.rename import rename_games
+from core.data import get_roms_data
 from cli.parser import get_args
+from core.utils import log
 
 # Test path: "/mnt/d/ROM'S/ROM'S"
 
@@ -12,11 +12,11 @@ def main() -> None:
     args = get_args()
 
     path = args.path
-    if not path.is_dir():
+    if not path.is_dir():   
         print("ERROR: The provided path is not a valid directory.")
         return
 
-    if args.logs: log(f"===== BEGINNING OF LOGGING =====\n")
+    if args.logs: log(f"\n===== BEGINNING OF LOGGING =====\n")
 
     if args.renameGames:
         rename_games(path, args.logs)

@@ -25,8 +25,13 @@ def confirm_delete(game_paths: list[Path], force: bool) -> bool:
         print("\nThese game paths will be deleted permanently:")
         for p in game_paths:
             print(str(p))
-    answer = "yes" if force else input("\nDo you confirm? (yes/no) ").lower().strip()
-    return answer == "yes"
+
+    while True: 
+        answer = "yes" if force else input("\nDo you confirm? (yes/no) ").lower().strip()
+        if answer in ['yes', 'no']:
+            break
+
+    return answer == 'yes'
 
 
 def build_similarity_graph(games_data: dict[int, dict], threshold: float) -> dict[int, list[int]]:
@@ -97,26 +102,26 @@ def delete_similar(games_data: dict[int, dict], force: bool, logs: bool, thresho
         
         while True:
             choice = input(
-                "\nFrom which console numbers you wish to eliminate the game? "
-                "(comma-separated, 'skip' if unsure): "
+                "\nFrom which console numbers you wish to eliminate the game? Separate it with commas.\n"
+                "(Press 'enter' to go next or 'quit' to exit): "
                 ).strip().lower()
-            if choice == 'skip': break
+            if not choice or choice == 'quit': break
 
             try: 
                 indices = [int(i.strip()) - 1 for i in choice.split(",")]
                 game_paths = [games_data[sorted_cluster[idx]]['path'] for idx in indices]
             except (ValueError, IndexError) as e:
-                print(f"[WARNING]: Incorrect input of console numbers. {e}\n")
+                print(f"[WARNING]: Incorrect input of console numbers. {e}")
                 continue
             break
 
-        if choice == 'skip':
-            if not prompt_continue():
-                break 
-            continue
-        
+        if not choice: continue
+        elif choice == 'quit': break
+
         if confirm_delete(game_paths, force): 
             delete_game_paths(game_paths, logs)
+        else:
+            print("Skipping...")
             
         if not prompt_continue(): break
     
