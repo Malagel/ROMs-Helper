@@ -5,4 +5,4 @@ summary.txt
 .vscode
 logs.txt
 venv
-tests/
+tests
