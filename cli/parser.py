@@ -25,17 +25,17 @@ def get_args() -> argparse.Namespace:
     )
     
     parser.add_argument(
-        "--no-summary",
-        action="store_false",
+        "--summary",
+        action="store_true",
         dest="summary",
-        help="Disables summary generation"
+        help="Enables summary generation"
     )
 
     parser.add_argument(
-        "--no-statistics",
-        action="store_false",
+        "--statistics",
+        action="store_true",
         dest="statistics",
-        help="Disables the statistics generation"
+        help="Enables the statistics generation"
     )
 
     parser.add_argument(
