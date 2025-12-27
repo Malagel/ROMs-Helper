@@ -28,7 +28,7 @@ def get_args() -> argparse.Namespace:
         "--summary",
         action="store_true",
         dest="summary",
-        help="""Enables summary generation of your ROM/Games collection, it will write all your games inside a organized
+        help="""Enables summary generation of your ROM/games collection, it will write all your games inside a organized
         text file."""
     )
 
