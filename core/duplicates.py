@@ -103,15 +103,15 @@ def delete_similar(games_data: dict[int, dict], force: bool, logs: bool, thresho
         while True:
             choice = input(
                 "\nFrom which console numbers you wish to eliminate the game? Separate it with commas.\n"
-                "(Press 'enter' to go next or 'quit' to exit): "
+                "(Leave it blank to skip or type 'quit' to exit): "
                 ).strip().lower()
             if not choice or choice == 'quit': break
 
             try: 
                 indices = [int(i.strip()) - 1 for i in choice.split(",")]
                 game_paths = [games_data[sorted_cluster[idx]]['path'] for idx in indices]
-            except (ValueError, IndexError) as e:
-                print(f"[WARNING]: Incorrect input of console numbers. {e}")
+            except (ValueError, IndexError):
+                print(f"[WARNING]: Incorrect input of console numbers. Try again")
                 continue
             break
 
@@ -125,4 +125,4 @@ def delete_similar(games_data: dict[int, dict], force: bool, logs: bool, thresho
             
         if not prompt_continue(): break
     
-    print("Deletion finalized.")
+    print("\nDeletion finalized.")
