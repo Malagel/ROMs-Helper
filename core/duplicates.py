@@ -26,7 +26,7 @@ def confirm_delete(game_paths: list[Path], force: bool) -> bool:
         for p in game_paths:
             print(str(p))
 
-    while True: 
+    while True:
         answer = "yes" if force else input("\nDo you confirm? (yes/no) ").lower().strip()
         if answer in ['yes', 'no']:
             break
