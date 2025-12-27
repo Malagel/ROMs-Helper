@@ -9,13 +9,13 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "path",
         type=Path,
-        help="Path to the root directory of your ROMs collection."
+        help="Path to the root directory of your ROMs collection. You can drag a folder inside to get the path"
     )
 
     parser.add_argument(
         "--logs",
         action="store_true",
-        help="Keeps track of all interactions with the program and saves it to a log file."
+        help="Keeps track of all interactions with the program and saves them into a log file."
     )
     
     parser.add_argument(
@@ -28,14 +28,15 @@ def get_args() -> argparse.Namespace:
         "--summary",
         action="store_true",
         dest="summary",
-        help="Enables summary generation"
+        help="""Enables summary generation of your ROM/Games collection, it will write all your games inside a organized
+        text file."""
     )
 
     parser.add_argument(
         "--statistics",
         action="store_true",
         dest="statistics",
-        help="Enables the statistics generation"
+        help="Enables the statistics generation. This will create a text file with useful information."
     )
 
     parser.add_argument(
@@ -45,10 +46,13 @@ def get_args() -> argparse.Namespace:
         const="identical",
         dest="delete",
         help="""Enables the similar deletion system. It detects similar game-names within a threshold so you\n 
-        can decide to keep them or not.
-        The threshold options are added after '--delete-similars', and are: \n
+        can decide to keep them or not.\n
+
+        \nThe threshold options are added after, like this '--delete-similars [YOUR_OPTION]'. The options are:\n
             1) 'identical' : this will stage for deletion ONLY the game-files that are almost exactly equal, basically the same games\n
-            2) 'similar' : games with similar names will be staged, useful if you want to check different versions of games or sagas\n"""
+            2) 'similar' : games with similar names will be staged, useful if you want to check different versions of games or sagas\n
+            
+            \nLeaving it blank will use 'identical' as default."""
     )
     
     parser.add_argument(
@@ -59,11 +63,10 @@ def get_args() -> argparse.Namespace:
         cleans the filename"""
     )
 
-
     parser.add_argument(
         "--version",
         action="version",
-        version="ROMs Helper 1.0.0"
+        version="ROMs Helper 0.1.0"
     )
 
     return parser.parse_args()
