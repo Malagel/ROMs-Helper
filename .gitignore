@@ -6,3 +6,6 @@ summary.txt
 logs.txt
 venv
 tests/
+DELETE/
+logs/
+.renaming_backups/
