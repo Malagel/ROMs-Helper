@@ -1,4 +1,5 @@
-from core.utils import log, clear_console, prompt_continue
+from core.utils import clear_console, prompt_continue, get_app_base_dir
+from core.logger import log
 from collections import defaultdict
 from itertools import combinations
 from rapidfuzz import fuzz
@@ -6,23 +7,45 @@ from pathlib import Path
 import shutil
 
 
-def delete_game_paths(game_paths: list[Path], logs: bool) -> None:
+def delete_game_paths(game_paths: list[Path], logs: bool, trueDeletion: bool) -> None:
+    if not trueDeletion:
+        base = get_app_base_dir()
+        delete_dir = base / "DELETE"
+        delete_dir.mkdir(exist_ok=True)
+
     for game_path in game_paths:
         is_dir = game_path.is_dir()
-
-        if is_dir:
-            shutil.rmtree(game_path)
-        else:
-            game_path.unlink()
         
-        if logs: log(f"[DELETE]: Deleted {'folder' if is_dir else 'file'} {game_path}.")
+        if trueDeletion:
+            if is_dir:
+                shutil.rmtree(game_path)
+            else:
+                game_path.unlink()
+        else:
+            target = delete_dir / game_path.name
+            
+            counter = 1
+            while target.exists():
+                target = delete_dir / f"{game_path.stem}_{counter}{game_path.suffix}"
+                counter += 1
 
-    print(f"\nDeleted {len(game_paths)} games")
+            shutil.move(str(game_path), str(target))
+
+        if logs: 
+            action = "Deleted" if trueDeletion else "Moved"
+            dest = "" if trueDeletion else " to 'DELETE' folder"
+
+            log(f"[DELETE]: {action} {'folder' if is_dir else 'file'} {game_path}{dest}.")
+
+    action = "Deleted" if trueDeletion else "Moved"
+    dest = "" if trueDeletion else " to 'DELETE' folder"
+    print(f"{action} {len(game_paths)} games{dest}")
 
 
-def confirm_delete(game_paths: list[Path], force: bool) -> bool:
+def confirm_delete(game_paths: list[Path], force: bool, trueDeletion: bool) -> bool:
+    action = "moved to the 'DELETE' folder" if not trueDeletion else "deleted permanently"
     if not force:
-        print("\nThese game paths will be deleted permanently:")
+        print(f"\nThese game paths will be {action}:")
         for p in game_paths:
             print(str(p))
 
@@ -80,11 +103,12 @@ def get_clusters(games_data: dict[int, dict], threshold: float) -> list[list[int
     return clusters
     
 
-def delete_similar(games_data: dict[int, dict], force: bool, logs: bool, threshold: str) -> None:
+def detect_duplicates(games_data: dict[int, dict], force: bool, logs: bool, threshold: str, trueDeletion: bool) -> None:
     threshold_map = {"identical": 100, "similar": 76}
 
-    print("Building similar games...")
+    print(f"Building {threshold} games...", end="", flush=True)
     clusters = get_clusters(games_data, threshold_map[threshold])
+    print("DONE")
 
     if logs:
         for cluster in clusters:
@@ -118,8 +142,8 @@ def delete_similar(games_data: dict[int, dict], force: bool, logs: bool, thresho
         if not choice: continue
         elif choice == 'quit': break
 
-        if confirm_delete(game_paths, force): 
-            delete_game_paths(game_paths, logs)
+        if confirm_delete(game_paths, force, trueDeletion): 
+            delete_game_paths(game_paths, logs, trueDeletion)
         else:
             print("Skipping...")
             
