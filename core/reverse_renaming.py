@@ -32,7 +32,7 @@ def choose_backup(backups_available: list[Path]) -> int:
     print("More than one backup for renaming was found:\n")
 
     for i, backup in enumerate(backups_available, start=1):
-        human_readable_timestamp = datetime.strptime(str(backup.stem), "%Y%m%d_%H%M%S").strftime("%Y-%m-%d %H:%M:%S")
+        human_readable_timestamp = datetime.strptime(str(backup.stem), "%d%m%Y_%H%M%S").strftime("%d-%m-%Y at %H:%M:%S")
         print(f"{i}) Backup from {human_readable_timestamp}")
 
     while True:
