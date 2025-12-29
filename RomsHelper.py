@@ -1,10 +1,12 @@
 from core.statistics import create_statistics
-from core.duplicates import delete_similar
+from core.duplicates import detect_duplicates
 from core.summary import create_summary
 from core.rename import rename_games
-from core.data import get_roms_data
+from core.reverse_renaming import reverse_renaming
+from core.logger import start_logging, stop_logging
+from core.fetch_data import get_roms_data
 from cli.parser import get_args
-from core.utils import log
+from datetime import datetime
 
 # Test path: "/mnt/d/ROM'S/ROM'S"
 
@@ -15,9 +17,10 @@ def main() -> None:
 
     arg_options = [
         args.renameGames,
-        args.delete,
+        args.detectDuplicates,
         args.summary,
         args.statistics,
+        args.reverseRenaming
     ]   
 
     if not any(arg_options):
@@ -28,16 +31,23 @@ def main() -> None:
         print("ERROR: The provided path is not a valid directory.")
         return
 
-    if args.logs: log(f"\n===== BEGINNING OF LOGGING =====\n")
+    if args.logs: start_logging()
 
     if args.renameGames:
-        rename_games(path, args.logs)
+        rename_games(path, args.logs, args.renamesBackup)
 
-    if args.delete:
+    if args.reverseRenaming:
+        if args.renameGames:
+            print("ERROR: You can't rename your games and then reverse it...")
+            return
+        
+        reverse_renaming(args.logs)
+
+    if args.detectDuplicates:
         if not data:
             data = get_roms_data(path, args.logs)
 
-        delete_similar(data["games_data"], args.force, args.logs, args.delete)
+        detect_duplicates(data["games_data"], args.force, args.logs, args.detectDuplicates, args.trueDeletion)
 
     if args.summary:
         create_summary(path, args.logs)
@@ -48,6 +58,7 @@ def main() -> None:
 
         create_statistics(data, args.logs)
 
+    if args.logs: stop_logging()
 
 if __name__ == "__main__":
     main()
