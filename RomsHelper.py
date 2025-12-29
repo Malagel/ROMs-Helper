@@ -24,11 +24,11 @@ def main() -> None:
     ]   
 
     if not any(arg_options):
-        print("ERROR: There were no flags provided")
+        print("[ERROR]: There were no tool flags provided")
         return
     
     if not path.is_dir():   
-        print("ERROR: The provided path is not a valid directory.")
+        print("[ERROR]: The provided path is not a valid directory.")
         return
 
     if args.logs: start_logging()
@@ -38,7 +38,7 @@ def main() -> None:
 
     if args.reverseRenaming:
         if args.renameGames:
-            print("ERROR: You can't rename your games and then reverse it...")
+            print("[ERROR]: You can't rename your games and reverse it at the same time...")
             return
         
         reverse_renaming(args.logs)
