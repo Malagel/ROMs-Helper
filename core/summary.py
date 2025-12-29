@@ -1,4 +1,5 @@
-from core.utils import is_valid_subfolder, log
+from core.utils import is_valid_subfolder, get_app_base_dir
+from core.logger import log
 from pathlib import Path
 
 
@@ -8,7 +9,10 @@ def create_summary(path: Path, logs: bool) -> None:
     print("Generating summary... ", end="", flush=True)
     if logs: log(f"[SUMMARY TOOL]: Generating summary from {path}")
 
-    with open("summary.txt", "w") as f:
+    base = get_app_base_dir()
+    summary_path = base / "summary.txt"
+
+    with open(summary_path, "w") as f:
         for console in path.glob("*"): 
             if not console.is_dir(): continue
 
