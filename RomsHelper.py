@@ -49,14 +49,15 @@ def main() -> None:
 
         detect_duplicates(data["games_data"], args.force, args.logs, args.detectDuplicates, args.trueDeletion)
 
-    if args.summary:
-        create_summary(path, args.logs)
-
     if args.statistics:
-        if not data:
+        if not data or args.detectDuplicates:
             data = get_roms_data(path, args.logs)
 
         create_statistics(data, args.logs)
+
+    if args.summary:
+        create_summary(path, args.logs)
+
 
     if args.logs: stop_logging()
 
