@@ -40,13 +40,14 @@ def get_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--delete-duplicates",
+        "--detect-duplicates",
         nargs="?",
         choices=["identical", "similar"],
         const="identical",
-        dest="delete",
-        help="""Enables the similar deletion system. It detects similar game-names within a threshold so you\n 
-        can decide to keep them or not.\n
+        dest="detectDuplicates",
+        help="""Enables the duplicates deletion system. It detects similar game-names within a threshold so you\n 
+        can decide to keep them or not. By default they are moved to a 'DELETE' folder (You can change the default\n
+        option with '--true-deletion').\n
 
         \nThe threshold options are added after, like this '--delete-similars [YOUR_OPTION]'. The options are:\n
             1) 'identical' : this will stage for deletion ONLY the game-files that are almost exactly equal, basically the same games\n
@@ -56,11 +57,33 @@ def get_args() -> argparse.Namespace:
     )
     
     parser.add_argument(
+        "--true-deletion",
+        action="store_true",
+        dest="trueDeletion",
+        help="""Instead of moving files inside a folder for you to delete manually (like with the duplicaton system),\n
+        delete them permanently."""
+    )
+    
+    parser.add_argument(
         "--rename-games",
         action="store_true",
         dest="renameGames",
-        help="""Renames each game in your collection by deleting specified tags (e.g., '(USA)', '(Europe)', ...) and
-        cleans the filename"""
+        help="""Renames each game in your collection by deleting specified tags (e.g., removing region tags like (USA), (EUR),\n
+        version numbers such as v1.2, duplicate spaces, and formatting symbols like '_')."""
+    )
+
+    parser.add_argument(
+        "--no-renames-backup",
+        action="store_false",
+        dest="renamesBackup",
+        help="Desactivates the backup for renaming. No file for backup will be created."
+    )
+
+    parser.add_argument(
+        "--reverse-renaming",
+        action="store_true",
+        dest="reverseRenaming",
+        help="Reverses your last execution of the 'rename games' tool."
     )
 
     parser.add_argument(
