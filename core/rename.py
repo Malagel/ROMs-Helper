@@ -6,7 +6,7 @@ import json
 import sys
 
 def create_renaming_backup(backup_data: list[dict[str, str]]) -> None:
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now().strftime("%d%m%Y_%H%M%S")
 
     backup_dir = get_app_base_dir() / ".renaming_backups"
     backup_dir.mkdir(parents=True, exist_ok=True)
@@ -56,5 +56,5 @@ def rename_games(path: Path, logs: bool, renamesBackup: bool) -> None:
         create_renaming_backup(backup_data)
 
     print("DONE")
-    print("NOTE: If you want to reverse the effects, use the '--reverse_renaming' flag. Works only with your last renaming")
+    print("[NOTE]: If you want to reverse the effects, use the '--reverse-renaming' flag.")
                 
