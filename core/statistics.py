@@ -1,7 +1,6 @@
 from core.utils import get_app_base_dir
 from core.logger import log
 from pathlib import Path
-import sys
 
 
 def create_statistics(data: dict[str, dict], logs: bool) -> None:
@@ -21,6 +20,7 @@ def create_statistics(data: dict[str, dict], logs: bool) -> None:
         f.write(f"Total Games: {sum(games_per_console.values())}\n")
         f.write(f"Total Size: {sum(gb_per_console.values())} GB\n")
         f.write(f"Consoles Analyzed: {len(games_per_console)}\n")
+        f.write("\n========================================")
 
         f.write(f"\nGames per console in descending order:\n\n")
         for i, (console, games) in enumerate(sorted(games_per_console.items(), key=lambda x: x[1], reverse=True), start=1):
