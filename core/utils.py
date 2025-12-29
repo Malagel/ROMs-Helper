@@ -1,5 +1,7 @@
 from pathlib import Path
 import unicodedata
+import ctypes
+import sys
 import re
 import os
 
@@ -65,11 +67,6 @@ def clear_console() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-def log(msg: str) -> None:
-    with open("logs.txt", "a") as f:
-        f.write(f"{msg}\n") 
-
-
 def prompt_continue() -> bool:
     return input("\nPress enter to continue or type 'quit' to exit: ").strip().lower() != "quit"
 
@@ -93,3 +90,14 @@ def get_file_size_mb(path: Path) -> float:
 def is_valid_subfolder(name: str) -> bool:
     normalized = name.lower().replace("-", " ").strip()
     return normalized in ("single disk", "multi disk")
+
+
+def get_app_base_dir() -> Path:
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    return Path(sys.argv[0]).resolve().parent
+
+
+def hide_folder_windows(path: Path):
+    FILE_ATTRIBUTE_HIDDEN = 0x02
+    ctypes.windll.kernel32.SetFileAttributesW(str(path), FILE_ATTRIBUTE_HIDDEN)
