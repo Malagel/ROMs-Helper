@@ -1,4 +1,7 @@
-from core.utils import log
+from core.utils import get_app_base_dir
+from core.logger import log
+from pathlib import Path
+import sys
 
 
 def create_statistics(data: dict[str, dict], logs: bool) -> None:
@@ -8,8 +11,11 @@ def create_statistics(data: dict[str, dict], logs: bool) -> None:
 
     if logs: log(f"[STATISTICS TOOL]: Starting computation of data.")
 
+    base = get_app_base_dir()
+    statistics_path = base / "statistics.txt"
+
     print("Creating statistics from your collection... ", end="", flush=True)
-    with open("statistics.txt", "w") as f:
+    with open(statistics_path, "w") as f:
 
         f.write("============== STATISTICS ==============\n\n")
         f.write(f"Total Games: {sum(games_per_console.values())}\n")
