@@ -1,4 +1,4 @@
-from core.utils import clear_console, prompt_continue, get_app_base_dir
+from core.utils import clear_console, prompt_continue, get_app_base_dir, normalize
 from core.logger import log
 from collections import defaultdict
 from itertools import combinations
@@ -6,12 +6,19 @@ from rapidfuzz import fuzz
 from pathlib import Path
 import shutil
 
+MAX_CLUSTER_SIZE = 100
+
+class ClusterTooLargeError(Exception):
+    pass
 
 def delete_game_paths(game_paths: list[Path], logs: bool, trueDeletion: bool) -> None:
     if not trueDeletion:
         base = get_app_base_dir()
         delete_dir = base / "DELETE"
         delete_dir.mkdir(exist_ok=True)
+
+    action = "Deleted" if trueDeletion else "Moved"
+    dest = "" if trueDeletion else "to 'DELETE' folder"
 
     for game_path in game_paths:
         is_dir = game_path.is_dir()
@@ -31,30 +38,28 @@ def delete_game_paths(game_paths: list[Path], logs: bool, trueDeletion: bool) ->
 
             shutil.move(str(game_path), str(target))
 
-        if logs: 
-            action = "Deleted" if trueDeletion else "Moved"
-            dest = "" if trueDeletion else " to 'DELETE' folder"
+        if logs: log(f"[DETECT DUPLICATES]: {action} {'folder' if is_dir else 'file'} {game_path} {dest}.")
 
-            log(f"[DELETE]: {action} {'folder' if is_dir else 'file'} {game_path}{dest}.")
-
-    action = "Deleted" if trueDeletion else "Moved"
-    dest = "" if trueDeletion else " to 'DELETE' folder"
-    print(f"{action} {len(game_paths)} games{dest}")
+    print(f"{action} {len(game_paths)} games {dest}")
 
 
 def confirm_delete(game_paths: list[Path], force: bool, trueDeletion: bool) -> bool:
+    if force: return True
+
     action = "moved to the 'DELETE' folder" if not trueDeletion else "deleted permanently"
-    if not force:
-        print(f"\nThese game paths will be {action}:")
-        for p in game_paths:
-            print(str(p))
+    print(f"\nThese game paths will be {action}:")
+
+    for p in game_paths:
+        print(f"- {p}")
 
     while True:
-        answer = "yes" if force else input("\nDo you confirm? (yes/no) ").lower().strip()
-        if answer in ['yes', 'no']:
+        print("\nDo you confirm? [y/N]")
+        answer = input("> ").lower().strip()
+        if answer in ['y', 'n']:
             break
-
-    return answer == 'yes'
+        print("[ERROR]: Invalid answer, try again.")
+    
+    return answer == 'y'
 
 
 def build_similarity_graph(games_data: dict[int, dict], threshold: float) -> dict[int, list[int]]:
@@ -66,6 +71,9 @@ def build_similarity_graph(games_data: dict[int, dict], threshold: float) -> dic
         n2 = data2["normalized_name"]
 
         if threshold == 100:
+            n1 = normalize(data1["original_name"])
+            n2 = normalize(data2["original_name"]) 
+
             if n1 == n2:
                 graph[id1].append(id2)
                 graph[id2].append(id1)
@@ -79,21 +87,29 @@ def build_similarity_graph(games_data: dict[int, dict], threshold: float) -> dic
 
     return graph
 
-def dfs_clusters(graph: dict[int, list[int]], node: int, visited: set, cluster: list):
+def dfs_clusters(graph: dict[int, list[int]], node: int, visited: set, cluster: list[int]):
     visited.add(node)
     cluster.append(node)
-    
+
+    if len(cluster) > MAX_CLUSTER_SIZE: 
+        raise ClusterTooLargeError
+
     for neighbor in graph[node]:
         if neighbor not in visited:
             dfs_clusters(graph, neighbor, visited, cluster)
 
 
-def get_clusters(games_data: dict[int, dict], threshold: float) -> list[list[int]]:
+
+def get_clusters(games_data: dict[int, dict], threshold: float, logs: bool) -> list[list[int]]:
+    if logs: log(f"[DETECT DUPLICATES]: Building similarity graph with threshold {threshold}. This can be customized with --dd-custom-threshold.")
     graph = build_similarity_graph(games_data, threshold)
+    if logs: log(f"[DETECT DUPLICATES]: Graph done.")
 
     visited = set()
     clusters = []
     
+    if logs: log(f"[DETECT DUPLICATES]: Building clusters by searching inside the graph.")
+
     for node in graph:
         if node not in visited:
             cluster = []
@@ -103,39 +119,56 @@ def get_clusters(games_data: dict[int, dict], threshold: float) -> list[list[int
     return clusters
     
 
-def detect_duplicates(games_data: dict[int, dict], force: bool, logs: bool, threshold: str, trueDeletion: bool) -> None:
-    threshold_map = {"identical": 100, "similar": 76}
+def detect_duplicates(games_data: dict[int, dict], force: bool, logs: bool, threshold: float, trueDeletion: bool) -> None:
+    print(f"Building games with the threshold as {'default' if threshold == 76.0 else threshold}...", end="", flush=True)
 
-    print(f"Building {threshold} games...", end="", flush=True)
-    clusters = get_clusters(games_data, threshold_map[threshold])
+    try:
+        clusters = get_clusters(games_data, threshold, logs)
+    except ClusterTooLargeError:
+        msg ="\n[ERROR]: With the current threshold, the number of detected games exceeds 100.\n" \
+             "Similarity was detected across too many entries of games, making it unfeasible for displaying.\n" \
+             "Please try again with a higher threshold value."
+        print(msg)
+        if logs: log(msg)
+
+        print("\nDuplicates detection finalized.")
+        return
+
     print("DONE")
 
     if logs:
+        log("[DETECT DUPLICATES]: Showing clusters...")
         for cluster in clusters:
             for id in cluster:
-                log(f"[CLUSTER]: {games_data[id]['original_name']} -- {games_data[id]['normalized_name']}")
-            log("")
+                log(f"> {games_data[id]['original_name']} -- {games_data[id]['normalized_name']}")
+            log("[DETECT DUPLICATES]: Next cluster.")
 
     for cluster in clusters:
         clear_console()
         sorted_cluster = sorted(cluster, key=lambda x: games_data[x]["original_name"])
 
-        print(f"Found {len(sorted_cluster)} games with the '{threshold}' option\n")
+        print(f"Found {len(sorted_cluster)} games with the threshold as {'default' if threshold == 76.0 else threshold}:\n")
         for i, id in enumerate(sorted_cluster, start=1):
             print(f"{i}) {games_data[id]['original_name']} -> {games_data[id]['metadata']['console']}")
         
         while True:
-            choice = input(
-                "\nFrom which console numbers you wish to eliminate the game? Separate it with commas.\n"
+            print(
+                f"\nSelect the games you wish to {'eliminate' if trueDeletion else 'move to a folder'}" 
+                ", separated with spaces (e.g.: 1 3 5).\n"
                 "(Leave it blank to skip or type 'quit' to exit): "
-                ).strip().lower()
+                )
+            choice = input("> ").strip().lower()
             if not choice or choice == 'quit': break
 
             try: 
-                indices = [int(i.strip()) - 1 for i in choice.split(",")]
+                indices = [int(i.strip()) - 1 for i in choice.split() if i.isdigit() and int(i) > 0]
+                if not indices: 
+                    raise ValueError
+                
                 game_paths = [games_data[sorted_cluster[idx]]['path'] for idx in indices]
+
             except (ValueError, IndexError):
-                print(f"[WARNING]: Incorrect input of console numbers. Try again")
+                print(f"[ERROR]: The value is invalid, try again")
                 continue
             break
 
@@ -149,4 +182,4 @@ def detect_duplicates(games_data: dict[int, dict], force: bool, logs: bool, thre
             
         if not prompt_continue(): break
     
-    print("\nDeletion finalized.")
+    print("\nDuplicates detection finalized.")
