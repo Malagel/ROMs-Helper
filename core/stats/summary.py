@@ -12,8 +12,11 @@ def create_summary(path: Path, logs: bool) -> None:
     if logs: log(f"[SUMMARY TOOL]: Generating summary from {path}")
 
     now = datetime.now()
-    base = get_app_base_dir()
-    summary_path = base / f"summary_{now.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
+
+    base_dir = get_app_base_dir() / "summaries"
+    base_dir.mkdir(parents=True, exist_ok=True)
+
+    summary_path = base_dir / f"summary_{now.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
 
     with open(summary_path, "w") as f:
         f.write("===========================================================\n")
