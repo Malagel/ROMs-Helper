@@ -10,9 +10,11 @@ def create_statistics(data: dict[str, dict], logs: bool) -> None:
 
     if logs: log(f"[STATISTICS TOOL]: Starting computation of data.")
 
+    base_dir = get_app_base_dir() / "statistics"
+    base_dir.mkdir(parents=True, exist_ok=True)
+
     now = datetime.now()
-    base = get_app_base_dir()
-    statistics_path = base / f"statistics_{now.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
+    statistics_path = base_dir / f"statistics_{now.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
 
     TITLE_LINE = "=" * 50
     SECTION_LINE = "-" * 50
