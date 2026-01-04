@@ -71,21 +71,28 @@ def prompt_continue() -> bool:
     return input("\nPress enter to continue or type 'quit' to exit: ").strip().lower() != "quit"
 
 
-def get_folder_size_gb(folder_path: Path) -> float:
+def get_folder_byte_size(folder_path: Path) -> int:
     total_size = 0
     for element in folder_path.rglob('*'):
         if element.is_file():
-            total_size += element.stat().st_size
+            total_size += get_file_byte_size(element)
 
-    return round(total_size / (1024 ** 3), 2) 
+    return total_size
 
 
-def get_file_size_mb(path: Path) -> float:
-    if path.is_file():
-        return  round(path.stat().st_size / (1024 ** 2), 2)
-    else:
-        return get_folder_size_gb(path) * 1024
-    
+def get_file_byte_size(path: Path) -> int:
+    return path.stat().st_size
+
+
+def format_bytes(bytes: int) -> str:
+    for unit in ("Bytes", "KB", "MB", "GB", "TB", "PB"):
+        if bytes < 1024:
+            if unit == "Bytes":
+                return f"{bytes} {unit}"
+            
+            return f"{bytes:.2f} {unit}"
+        bytes /= 1024
+
 
 def is_valid_subfolder(name: str) -> bool:
     normalized = name.lower().replace("-", " ").strip()
@@ -101,3 +108,20 @@ def get_app_base_dir() -> Path:
 def hide_folder_windows(path: Path):
     FILE_ATTRIBUTE_HIDDEN = 0x02
     ctypes.windll.kernel32.SetFileAttributesW(str(path), FILE_ATTRIBUTE_HIDDEN)
+
+
+def welcome_message():
+    print(r"""
+╔════════════════════════════════════════════════════╗
+║               Welcome to ROMsHelper!               ║
+║                   Version 0.1.0                    ║
+║====================================================║   
+║                                                    ║      
+║           A simple Command Line tool for           ║
+║               organizing your ROMs.                ║
+║                                                    ║
+║====================================================║                      
+║ > For more information consult the Github page:    ║
+║ https://github.com/Malagel/ROMs-Helper             ║                                                          
+╚════════════════════════════════════════════════════╝
+""")
