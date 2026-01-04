@@ -1,7 +1,9 @@
 from core.utils import is_valid_subfolder, get_app_base_dir
+from datetime import datetime
 from core.logger import log
 from pathlib import Path
 
+# TODO: Prettify all this mess
 
 def create_summary(path: Path, logs: bool) -> None:
     spaces = " " * 4
@@ -9,10 +11,15 @@ def create_summary(path: Path, logs: bool) -> None:
     print("Generating summary... ", end="", flush=True)
     if logs: log(f"[SUMMARY TOOL]: Generating summary from {path}")
 
+    now = datetime.now()
     base = get_app_base_dir()
-    summary_path = base / "summary.txt"
+    summary_path = base / f"summary_{now.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
 
     with open(summary_path, "w") as f:
+        f.write("===========================================================\n")
+        f.write(f"Summary generated on: {now.strftime('%d/%m/%Y at %H:%M:%S')}\n")
+        f.write("===========================================================\n\n")
+
         for console in path.glob("*"): 
             if not console.is_dir(): continue
 
@@ -31,4 +38,4 @@ def create_summary(path: Path, logs: bool) -> None:
             f.write("\n")
             
     print("DONE")
-    if logs: log(f"[SUMMARY TOOL]: The text file 'summary.txt' was created.")
+    if logs: log(f"[SUMMARY TOOL]: The text file 'summary_{now.strftime('%Y-%m-%d_%H-%M-%S')}.txt' was created.")
