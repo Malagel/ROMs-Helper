@@ -1,65 +1,63 @@
-from core.statistics import create_statistics
+from core.stats.statistics import create_statistics
 from core.duplicates import detect_duplicates
-from core.summary import create_summary
-from core.rename import rename_games
-from core.reverse_renaming import reverse_renaming
+from core.stats.summary import create_summary
+from core.renaming.rename import rename_games
+from core.renaming.reverse_renaming import reverse_renaming
 from core.logger import start_logging, stop_logging
 from core.fetch_data import get_roms_data
-from cli.parser import get_args
-from datetime import datetime
+from core.options import get_interactive_options
 
-# Test path: "/mnt/d/ROM'S/ROM'S"
+# Test path: /mnt/d/ROM'S/ROM'S
 
 def main() -> None:
-    args = get_args()
-    path = args.path
+    opts = get_interactive_options()
+    path = opts.path
     data = None
 
     arg_options = [
-        args.renameGames,
-        args.detectDuplicates,
-        args.summary,
-        args.statistics,
-        args.reverseRenaming
+        opts.renameGames,
+        opts.detectDuplicates,
+        opts.summary,
+        opts.statistics,
+        opts.reverseRenaming
     ]   
 
     if not any(arg_options):
-        print("[ERROR]: There were no tool flags provided")
+        print("[ERROR]: There were no actions provided.")
+        input("Press enter to exit. ")
         return
     
-    if not path.is_dir():   
-        print("[ERROR]: The provided path is not a valid directory.")
-        return
+    if opts.logs: start_logging()
 
-    if args.logs: start_logging()
+    if opts.renameGames:
+        rename_games(path, opts.logs, opts.renamesBackup)
 
-    if args.renameGames:
-        rename_games(path, args.logs, args.renamesBackup)
-
-    if args.reverseRenaming:
-        if args.renameGames:
+    if opts.reverseRenaming:
+        if opts.renameGames:
             print("[ERROR]: You can't rename your games and reverse it at the same time...")
+            input("Press enter to exit. ")
             return
         
-        reverse_renaming(args.logs)
+        reverse_renaming(opts.logs)
 
-    if args.detectDuplicates:
+    if opts.detectDuplicates:
         if not data:
-            data = get_roms_data(path, args.logs)
+            data = get_roms_data(path, opts.logs)
 
-        detect_duplicates(data["games_data"], args.force, args.logs, args.detectDuplicates, args.trueDeletion)
+        detect_duplicates(data["games_data"], opts.force, opts.logs, opts.detectDuplicates, opts.trueDeletion)
 
-    if args.statistics:
-        if not data or args.detectDuplicates:
-            data = get_roms_data(path, args.logs)
+    if opts.statistics:
+        if not data or opts.detectDuplicates:
+            data = get_roms_data(path, opts.logs)
 
-        create_statistics(data, args.logs)
+        create_statistics(data, opts.logs)
 
-    if args.summary:
-        create_summary(path, args.logs)
+    if opts.summary:
+        create_summary(path, opts.logs)
 
-
-    if args.logs: stop_logging()
+    if opts.logs: stop_logging()
+    
+    input("\nPress enter to exit. ")
 
 if __name__ == "__main__":
     main()
