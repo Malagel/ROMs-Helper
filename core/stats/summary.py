@@ -41,4 +41,6 @@ def create_summary(path: Path, logs: bool) -> None:
             f.write("\n")
             
     print("DONE")
+    print("The file was created inside the 'summaries' folder.")
+
     if logs: log(f"[SUMMARY TOOL]: The text file 'summary_{now.strftime('%Y-%m-%d_%H-%M-%S')}.txt' was created.")

@@ -69,5 +69,6 @@ def create_statistics(data: dict[str, dict], logs: bool) -> None:
 
     
     print("DONE")
+    print("The file was created inside the 'statistics' folder.")
     if logs: log(f"[STATISTICS TOOL]: Statistics created and saved on 'statistics_{now.strftime('%Y-%m-%d_%H-%M-%S')}.txt'.")
     
