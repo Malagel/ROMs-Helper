@@ -1,4 +1,4 @@
-from core.utils import is_valid_subfolder, get_folder_size_gb, get_file_size_mb, normalize
+from core.utils import is_valid_subfolder, get_file_byte_size, get_folder_byte_size, normalize
 from collections import defaultdict
 from core.logger import log
 from pathlib import Path
@@ -10,7 +10,7 @@ def add_game_data(games_data: dict[int, dict], game: Path, console: Path, logs: 
             "normalized_name": normalize(game.stem, full_clean=True),
             "metadata": {
                 "console": console.name,
-                "size": get_file_size_mb(game)
+                "size": get_file_byte_size(game) if game.is_file() else get_folder_byte_size(game) 
             }
         }
 
@@ -21,7 +21,7 @@ def add_game_data(games_data: dict[int, dict], game: Path, console: Path, logs: 
 def get_roms_data(path: Path, logs: bool) -> dict[str, dict]:
     if logs: log(f"[DATA COLLECTOR]: Fetching and organizing data from {path}")
 
-    gb_per_console = {}
+    bytes_per_console = {}
     games_per_console = defaultdict(int)
     games_data = {}
     identifier = 0
@@ -34,7 +34,7 @@ def get_roms_data(path: Path, logs: bool) -> dict[str, dict]:
 
         if logs: log(f"[DATA COLLECTOR]: Scanning console {console.name}")
 
-        gb_per_console[console.name] = get_folder_size_gb(console)
+        bytes_per_console[console.name] = get_folder_byte_size(console)
 
         # Get through all files inside console folders
         for sub in console.glob("*"):
@@ -55,14 +55,14 @@ def get_roms_data(path: Path, logs: bool) -> dict[str, dict]:
 
 
         if logs:
-            log(f"[DATA COLLECTOR]: Folder size of {console.name} = {gb_per_console[console.name]}")
-            log(f"[DATA COLLECTOR]: Found {games_per_console[console.name]} games in {console.name}") 
+            log(f"[DATA COLLECTOR]: The folder '{console.name}' has a size of {bytes_per_console[console.name]} GB.")
+            log(f"[DATA COLLECTOR]: Found {games_per_console[console.name]} games in '{console.name}'.") 
     
-    if logs: log(f"[DATA COLLECTOR]: Collection of data finalized - {len(gb_per_console)} consoles processed")
+    if logs: log(f"[DATA COLLECTOR]: Collection of data finalized - {len(bytes_per_console)} consoles processed.")
 
     print("DONE")
     return {
-            "gb_per_console": gb_per_console,
+            "bytes_per_console": bytes_per_console,
             "games_per_console": games_per_console,
             "games_data": games_data          
     }
