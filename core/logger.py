@@ -16,10 +16,12 @@ def start_logging():
     log_file = log_path.open("a", encoding="utf-8")
 
 
-def log(msg: str):
-    log_file.write(f"{msg}\n")
+def log(msg: str) -> None:
+    timestamp = datetime.now().isoformat(timespec="milliseconds")
+    log_file.write(f"{timestamp} {msg}\n")
     log_file.flush()
 
 
 def stop_logging():
+    print("[LOGGER]: Log file saved in logs folder.")
     log_file.close()
