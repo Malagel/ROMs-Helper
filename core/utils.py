@@ -68,7 +68,7 @@ def clear_console() -> None:
 
 
 def prompt_continue() -> bool:
-    return input("\nPress enter to continue or type 'quit' to exit: ").strip().lower() != "quit"
+    return input("Press enter to continue or type 'quit' to exit: ").strip().lower() != "quit"
 
 
 def get_folder_byte_size(folder_path: Path) -> int:
