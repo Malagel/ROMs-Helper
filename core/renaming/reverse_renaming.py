@@ -5,7 +5,7 @@ from pathlib import Path
 import json
 
 def reverse_renaming_with(backup: Path, logs: bool) -> None:
-    print("Renaming from backup... ", end="", flush=True)
+    print("• Renaming from backup... ", end="", flush=True)
     with backup.open("r", encoding="utf-8") as f:
         pairs = json.load(f)
 
@@ -28,21 +28,21 @@ def reverse_renaming_with(backup: Path, logs: bool) -> None:
     answer = input("> ").strip().lower()
     if answer == "y":
         backup.unlink()
-        print("Backup removed.")
+        print("• Backup removed.")
 
 def choose_backup(backups_available: list[Path]) -> int:
     print("More than one backup for renaming was found (Day/Month/Year):\n")
 
     for i, backup in enumerate(backups_available, start=1):
         human_readable_timestamp = datetime.strptime(str(backup.stem), "%d%m%Y_%H%M%S").strftime("%d/%m/%Y at %H:%M:%S")
-        print(f"{i}) Backup from {human_readable_timestamp}")
+        print(f"[{i}] Backup from {human_readable_timestamp}")
 
     while True:
         try:
             print("\nChoose one number from the list or type 'quit' to exit:")
             choice = input("> ")
             if choice == 'quit':
-                print("No changes were made.")
+                print("• No changes were made.")
                 return None
             
             if int(choice) > len(backups_available) or int(choice) < 1:
