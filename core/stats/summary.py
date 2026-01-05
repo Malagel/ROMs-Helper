@@ -1,14 +1,16 @@
-from core.utils import is_valid_subfolder, get_app_base_dir
+from core.utils import is_valid_subfolder, get_app_base_dir, normalize
 from datetime import datetime
 from core.logger import log
 from pathlib import Path
 
-# TODO: Prettify all this mess
+TITLE_LINE = "=" * 75
+SECTION_LINE = "-" * 75
+INDENT = " " * 4
+SUB = "▶"
+ITEM = "•"
 
 def create_summary(path: Path, logs: bool) -> None:
-    spaces = " " * 4
-
-    print("Generating summary... ", end="", flush=True)
+    print("• Generating summary... ", end="", flush=True)
     if logs: log(f"[SUMMARY TOOL]: Generating summary from {path}")
 
     now = datetime.now()
@@ -17,30 +19,34 @@ def create_summary(path: Path, logs: bool) -> None:
     base_dir.mkdir(parents=True, exist_ok=True)
 
     summary_path = base_dir / f"summary_{now.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
-
+    
     with open(summary_path, "w") as f:
-        f.write("===========================================================\n")
-        f.write(f"Summary generated on: {now.strftime('%d/%m/%Y at %H:%M:%S')}\n")
-        f.write("===========================================================\n\n")
+        f.write(f"{TITLE_LINE}\n")
+        f.write("                               ROMS SUMMARY\n")
+        f.write(f"{TITLE_LINE}\n\n") 
 
-        for console in path.glob("*"): 
-            if not console.is_dir(): continue
+        f.write(f"Summary generated on: {now.strftime('%d/%m/%Y at %H:%M:%S')}\n\n")
 
-            f.write(f"================= {console.name} =================\n")
+        for console in sorted(p for p in path.iterdir() if p.is_dir()): 
 
-            for sub in console.glob("*"):
+            f.write(f"[ {console.name} ]\n")
+            f.write(f"{SECTION_LINE}\n")
+
+            for sub in sorted(console.iterdir()):
                 if sub.is_dir() and is_valid_subfolder(sub.name):
                     if logs: log(f"[SUMMARY TOOL]: Found subfolder {sub.name} inside {console.name}. Iterating over...")
-                    f.write(f"{spaces}Subfolder: {sub.name}\n")
-                    for game in sub.glob("*"):
-                        f.write(f"{spaces * 2}{game.stem}\n")
+
+                    f.write(f"{SUB} Subfolder : {sub.name}\n")
+
+                    for game in sorted(sub.iterdir()):
+                        f.write(f"{INDENT}{ITEM} {normalize(game.stem)}\n")
                 else:
-                    f.write(f"{spaces}{sub.stem}\n")
+                    f.write(f"{ITEM} {normalize(sub.stem)}\n")
 
             if logs: log(f"[SUMMARY TOOL]: Finished scanning and writing for {console.name}")
             f.write("\n")
             
     print("DONE")
-    print("The file was created inside the 'summaries' folder.")
+    print("• The file was created inside the 'summaries' folder.")
 
     if logs: log(f"[SUMMARY TOOL]: The text file 'summary_{now.strftime('%Y-%m-%d_%H-%M-%S')}.txt' was created.")
