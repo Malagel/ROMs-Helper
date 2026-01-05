@@ -18,10 +18,10 @@ def start_logging():
 
 def log(msg: str) -> None:
     timestamp = datetime.now().isoformat(timespec="milliseconds")
-    log_file.write(f"{timestamp} {msg}\n")
+    log_file.write(f"[{timestamp}]{msg}\n")
     log_file.flush()
 
 
 def stop_logging():
-    print("[LOGGER]: Log file saved in logs folder.")
+    print("• Log file saved in logs folder.")
     log_file.close()
