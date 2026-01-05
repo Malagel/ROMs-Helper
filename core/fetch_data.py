@@ -26,7 +26,7 @@ def get_roms_data(path: Path, logs: bool) -> dict[str, dict]:
     games_data = {}
     identifier = 0
 
-    print(f"Getting your ROMs data from {path}... ", end="", flush=True)
+    print(f"• Getting your ROMs data from {path}... ", end="", flush=True)
     for console in path.glob("*"):
         if not console.is_dir(): 
             if logs: log(f"[DATA COLLECTOR]: Ignoring non-directory item {console.name}")
