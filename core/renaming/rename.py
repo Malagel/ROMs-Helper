@@ -40,7 +40,7 @@ def rename_file(file: Path, logs: bool, renamesBackup: bool, backup: list[dict[s
 
 def rename_games(path: Path, logs: bool, renamesBackup: bool) -> None:
     backup_data = list()
-    print("Renaming all your gamefiles... ", end="", flush=True)
+    print("• Renaming all your gamefiles... ", end="", flush=True)
 
     for console in path.glob("*"): 
         if not console.is_dir(): continue
