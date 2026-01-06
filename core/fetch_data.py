@@ -18,7 +18,7 @@ def add_game_data(games_data: dict[int, dict], game: Path, console: Path, logs: 
             log(f"[DATA COLLECTOR]: {games_data[identifier]} ")
 
 
-def get_roms_data(path: Path, logs: bool) -> dict[str, dict]:
+def get_roms_data(path: Path, logs: bool, validSubfolder: set[str]) -> dict[str, dict]:
     if logs: log(f"[DATA COLLECTOR]: Fetching and organizing data from {path}")
 
     bytes_per_console = {}
@@ -38,7 +38,7 @@ def get_roms_data(path: Path, logs: bool) -> dict[str, dict]:
 
         # Get through all files inside console folders
         for sub in console.glob("*"):
-            if sub.is_dir() and is_valid_subfolder(sub.name):
+            if sub.is_dir() and is_valid_subfolder(sub.name, validSubfolder):
                 for game in sub.glob("*"):
 
                     # Inside single or multidisk
