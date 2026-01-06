@@ -1,3 +1,4 @@
+from core.logger import log
 from pathlib import Path
 from core.utils import welcome_message, clear_console
 
@@ -8,35 +9,59 @@ class Options:
         self.path: Path | None = None
         self.renameGames: bool = False
         self.reverseRenaming: bool = False
-        self.detectDuplicates: float | None = None
+        self.detectDuplicates: bool = False
+        self.duplicatesCustomThreshold: float = THRESHOLD_SIMILAR
         self.statistics: bool = False
         self.summary: bool = False
         self.logs: bool = False
         self.renamesBackup: bool = True
-        self.force: bool = False
-        self.trueDeletion: bool = False
+        self.confirmation: bool = True
+        self.safeDeletion: bool = True
+        self.validSubfolders: set[str] = {"single disk", "multi disk", "single-disk", "multi-disk"}
+
+    def show_values(self):
+        values = []
+        for name, value in vars(self).items():
+            values.append(f"{name}: {value}")
+
+        return values
 
 
 def process_advanced_flags(choices: list[str], opt: Options) -> None:
     if '--dd-custom-threshold' in choices:
-        print("\nCustom Threshold flag detected, please input a number between 1 and 100 (included): ")
-        while True:
-            choice = input("> ")
-            try:
-                threshold = float(choice)
-                if 1 <= threshold <= 100:
-                    break
-                else:
-                    print("[ERROR]: The value is not between the bounds, try again.")
-            except ValueError:
-                print("[ERROR]: The value is not a number, try again.")
+        idx = choices.index('--dd-custom-threshold')
 
-        opt.detectDuplicates = threshold
+        if idx + 1 >= len(choices):
+            print("[ERROR]: The flag '--dd-custom-threshold' did not recieve anything.")
+            raise ValueError
+        
+        value = choices[idx + 1]
 
+        threshold = float(value)
+
+        if not (1 <= threshold <= 100):
+            print("[ERROR]: The flag '--dd-custom-threshold' recieved an invalid value.")
+            raise ValueError
+
+        opt.duplicatesCustomThreshold = threshold
+        opt.detectDuplicates = True
+
+    if '--custom-subfolders' in choices:
+        idx = choices.index('--custom-subfolders')
+
+        if idx + 1 >= len(choices):
+            print("[ERROR]: The flag '--custom-subfolders' did not recieve anything.")
+            raise ValueError
+
+        extracted = choices[idx + 1].split(',')
+        custom_subfolders = {sub.replace('_', ' ').strip().lower() for sub in extracted}
+
+        opt.validSubfolders.update(custom_subfolders)
+    
     opt.logs = '--logs' in choices
     opt.renamesBackup = '--no-renames-backup' not in choices
-    opt.force = '--force' in choices
-    opt.trueDeletion = '--true-deletion' in choices 
+    opt.confirmation = '--no-confirmation' not in choices   
+    opt.safeDeletion = '--no-safe-deletion' not in choices 
 
 
 def get_interactive_options() -> Options:
@@ -64,7 +89,7 @@ def get_interactive_options() -> Options:
     choices = input("\n> ").strip().split()
     opt.renameGames = '1' in choices
     opt.reverseRenaming = '2' in choices
-    opt.detectDuplicates = THRESHOLD_SIMILAR if '3' in choices else None
+    opt.detectDuplicates = '3' in choices
     opt.statistics = '4' in choices
     opt.summary = '5' in choices
 
