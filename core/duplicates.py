@@ -13,24 +13,19 @@ class ClusterTooLargeError(Exception):
     pass
 
 
-def delete_game_paths(game_paths: list[Path], logs: bool, trueDeletion: bool) -> None:
-    if not trueDeletion:
+def delete_game_paths(game_paths: list[Path], logs: bool, safeDeletion: bool) -> None:
+    if safeDeletion:
         base = get_app_base_dir()
         delete_dir = base / "DELETE"
         delete_dir.mkdir(exist_ok=True)
 
-    action = "Deleted" if trueDeletion else "Moved"
-    dest = "." if trueDeletion else " to 'DELETE' folder"
+    action = "Moved" if safeDeletion else "Deleted"
+    dest =  " to 'DELETE' folder" if safeDeletion else "."
 
     for game_path in game_paths:
         is_dir = game_path.is_dir()
         
-        if trueDeletion:
-            if is_dir:
-                shutil.rmtree(game_path)
-            else:
-                game_path.unlink()
-        else:
+        if safeDeletion:
             target = delete_dir / game_path.name
             
             counter = 1
@@ -40,6 +35,12 @@ def delete_game_paths(game_paths: list[Path], logs: bool, trueDeletion: bool) ->
 
             shutil.move(str(game_path), str(target))
 
+        else:
+            if is_dir:
+                shutil.rmtree(game_path)
+            else:
+                game_path.unlink()
+
         if logs: log(f"[DETECT DUPLICATES]: {action} {'folder' if is_dir else 'file'} {game_path}{dest}")
 
     len_game_paths = len(game_paths)
@@ -47,14 +48,15 @@ def delete_game_paths(game_paths: list[Path], logs: bool, trueDeletion: bool) ->
     print(f"\n• {action} {len_game_paths} {game_s}{dest}")
 
 
-def confirm_delete(game_paths: list[Path], force: bool, trueDeletion: bool) -> bool:
-    if force: return True
+def confirm_delete(game_paths: list[Path], confirmation: bool, safeDeletion: bool) -> bool:
+    if not confirmation: return True
+
     sentence = 'This game path' if len(game_paths) == 1 else 'These game paths'
-    action = "moved to the 'DELETE' folder" if not trueDeletion else "deleted permanently"
+    action = "moved to the 'DELETE' folder" if safeDeletion else "deleted permanently"
     print(f"\n{sentence} will be {action}:")
 
     for p in game_paths:
-        print(f"▶ {p}")
+        print(f"▶ {p}") 
 
     while True:
         print("\nDo you confirm? [y/N]")
@@ -123,7 +125,7 @@ def get_clusters(games_data: dict[int, dict], threshold: float, logs: bool) -> l
     return clusters
     
 
-def detect_duplicates(games_data: dict[int, dict], force: bool, logs: bool, threshold: float, trueDeletion: bool) -> None:
+def detect_duplicates(games_data: dict[int, dict], confirmation: bool, logs: bool, threshold: float, safeDeletion: bool) -> None:
     print(f"• Building games with the threshold as {'default' if threshold == 76.0 else threshold}...", end="", flush=True)
 
     try:
@@ -157,7 +159,7 @@ def detect_duplicates(games_data: dict[int, dict], force: bool, logs: bool, thre
         
         while True:
             print(
-                f"\nSelect the games you wish to {'eliminate' if trueDeletion else 'move to a folder'}" 
+                f"\nSelect the games you wish to {'move to a folder' if safeDeletion else 'eliminate'}" 
                 ", separated with spaces (e.g.: 1 3 5).\n"
                 "(Leave it blank to skip or type 'quit' to exit): "
                 )
@@ -175,8 +177,8 @@ def detect_duplicates(games_data: dict[int, dict], force: bool, logs: bool, thre
                 print(f"[ERROR]: The value is invalid, try again")
                 continue
 
-            if confirm_delete(game_paths, force, trueDeletion): 
-                delete_game_paths(game_paths, logs, trueDeletion)
+            if confirm_delete(game_paths, confirmation, safeDeletion): 
+                delete_game_paths(game_paths, logs, safeDeletion)
                 break
             else:
                 print("\n• Retrying...")
