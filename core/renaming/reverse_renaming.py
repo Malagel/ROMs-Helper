@@ -42,7 +42,7 @@ def choose_backup(backups_available: list[Path]) -> int:
             print("\nChoose one number from the list or type 'quit' to exit:")
             choice = input("> ")
             if choice == 'quit':
-                print("• No changes were made.")
+                print("\n• No changes were made.")
                 return None
             
             if int(choice) > len(backups_available) or int(choice) < 1:
