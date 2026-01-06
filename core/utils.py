@@ -94,9 +94,9 @@ def format_bytes(bytes: int) -> str:
         bytes /= 1024
 
 
-def is_valid_subfolder(name: str) -> bool:
-    normalized = name.lower().replace("-", " ").strip()
-    return normalized in ("single disk", "multi disk")
+def is_valid_subfolder(name: str, valid_subfolders: set[str]) -> bool:
+    normalized = name.replace("_", " ").strip().lower()
+    return normalized in valid_subfolders
 
 
 def get_app_base_dir() -> Path:
