@@ -9,7 +9,7 @@ INDENT = " " * 4
 SUB = "▶"
 ITEM = "•"
 
-def create_summary(path: Path, logs: bool) -> None:
+def create_summary(path: Path, logs: bool, validSubfolders: set[str]) -> None:
     print("• Generating summary... ", end="", flush=True)
     if logs: log(f"[SUMMARY TOOL]: Generating summary from {path}")
 
@@ -33,7 +33,7 @@ def create_summary(path: Path, logs: bool) -> None:
             f.write(f"{SECTION_LINE}\n")
 
             for sub in sorted(console.iterdir()):
-                if sub.is_dir() and is_valid_subfolder(sub.name):
+                if sub.is_dir() and is_valid_subfolder(sub.name, validSubfolders):
                     if logs: log(f"[SUMMARY TOOL]: Found subfolder {sub.name} inside {console.name}. Iterating over...")
 
                     f.write(f"{SUB} Subfolder : {sub.name}\n")
