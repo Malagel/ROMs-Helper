@@ -3,7 +3,7 @@ from core.duplicates import detect_duplicates
 from core.stats.summary import create_summary
 from core.renaming.rename import rename_games
 from core.renaming.reverse_renaming import reverse_renaming
-from core.logger import start_logging, stop_logging
+from core.logger import start_logging, stop_logging, log
 from core.fetch_data import get_roms_data
 from core.options import get_interactive_options
 
@@ -27,7 +27,11 @@ def main() -> None:
         input("Press enter to exit. ")
         return
     
-    if opts.logs: start_logging()
+    if opts.logs: 
+        start_logging()
+        log("Starting logging")
+        log(f"Using this options: {opts.show_values()}")
+
 
     if opts.renameGames:
         rename_games(path, opts.logs, opts.renamesBackup)
@@ -44,7 +48,12 @@ def main() -> None:
         if not data:
             data = get_roms_data(path, opts.logs)
 
-        detect_duplicates(data["games_data"], opts.force, opts.logs, opts.detectDuplicates, opts.trueDeletion)
+        detect_duplicates(
+            data["games_data"], 
+            opts.confirmation, 
+            opts.logs, 
+            opts.duplicatesCustomThreshold, 
+            opts.safeDeletion)
 
     if opts.statistics:
         if not data or opts.detectDuplicates:
