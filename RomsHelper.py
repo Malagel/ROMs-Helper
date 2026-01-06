@@ -10,7 +10,12 @@ from core.options import get_interactive_options
 # Test path: /mnt/d/ROM'S/ROM'S
 
 def main() -> None:
-    opts = get_interactive_options()
+    try:
+        opts = get_interactive_options()
+    except (ValueError, IndexError):
+        input("\nPress enter to exit. ")
+        return
+    
     path = opts.path
     data = None
 
@@ -24,7 +29,7 @@ def main() -> None:
 
     if not any(arg_options):
         print("[ERROR]: There were no actions provided.")
-        input("Press enter to exit. ")
+        input("\nPress enter to exit. ")
         return
     
     if opts.logs: 
@@ -32,21 +37,19 @@ def main() -> None:
         log("Starting logging")
         log(f"Using this options: {opts.show_values()}")
 
-
     if opts.renameGames:
-        rename_games(path, opts.logs, opts.renamesBackup)
+        if opts.reverseRenaming:
+            print("[ERROR]: You can't rename your games and reverse it at the same time...")
+            input("\nPress enter to exit. ")
+            return
+        rename_games(path, opts.logs, opts.renamesBackup, opts.validSubfolders)
 
     if opts.reverseRenaming:
-        if opts.renameGames:
-            print("[ERROR]: You can't rename your games and reverse it at the same time...")
-            input("Press enter to exit. ")
-            return
-        
         reverse_renaming(opts.logs)
 
     if opts.detectDuplicates:
         if not data:
-            data = get_roms_data(path, opts.logs)
+            data = get_roms_data(path, opts.logs, opts.validSubfolders)
 
         detect_duplicates(
             data["games_data"], 
@@ -57,14 +60,16 @@ def main() -> None:
 
     if opts.statistics:
         if not data or opts.detectDuplicates:
-            data = get_roms_data(path, opts.logs)
+            data = get_roms_data(path, opts.logs, opts.validSubfolders)
 
         create_statistics(data, opts.logs)
 
     if opts.summary:
-        create_summary(path, opts.logs)
+        create_summary(path, opts.logs, opts.validSubfolders)
 
-    if opts.logs: stop_logging()
+    if opts.logs: 
+        log("Closing logging and saving...")
+        stop_logging()
     
     input("\nPress enter to exit. ")
 
