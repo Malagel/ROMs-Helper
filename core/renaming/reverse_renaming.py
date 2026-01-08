@@ -1,4 +1,4 @@
-from core.utils import get_app_base_dir
+from core.helpers.filesystem import get_app_base_dir
 from datetime import datetime
 from core.logger import log
 from pathlib import Path
@@ -30,6 +30,7 @@ def reverse_renaming_with(backup: Path, logs: bool) -> None:
         backup.unlink()
         print("• Backup removed.")
 
+
 def choose_backup(backups_available: list[Path]) -> int:
     print("More than one backup for renaming was found (Day/Month/Year):\n")
 
@@ -54,6 +55,7 @@ def choose_backup(backups_available: list[Path]) -> int:
         break
     
     return int(choice) - 1
+
 
 def reverse_renaming(logs: bool) -> None:
     backup_dir = get_app_base_dir() / ".renaming_backups"

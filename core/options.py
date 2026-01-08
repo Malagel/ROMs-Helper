@@ -1,8 +1,7 @@
 from core.logger import log
 from pathlib import Path
-from core.utils import welcome_message, clear_console
-
-THRESHOLD_SIMILAR = 76.0
+from core.helpers.cli import welcome_message, clear_console
+from core.helpers.constants import THRESHOLD_DEFAULT
 
 class Options: 
     def __init__(self):
@@ -10,7 +9,7 @@ class Options:
         self.renameGames: bool = False
         self.reverseRenaming: bool = False
         self.detectDuplicates: bool = False
-        self.duplicatesCustomThreshold: float = THRESHOLD_SIMILAR
+        self.duplicatesCustomThreshold: float = THRESHOLD_DEFAULT
         self.statistics: bool = False
         self.summary: bool = False
         self.logs: bool = False

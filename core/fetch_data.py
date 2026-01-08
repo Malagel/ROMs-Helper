@@ -1,4 +1,5 @@
-from core.utils import is_valid_subfolder, get_file_byte_size, get_folder_byte_size, normalize
+from core.helpers.filesystem import is_valid_subfolder, get_file_byte_size, get_folder_byte_size
+from core.helpers.text import normalize
 from collections import defaultdict
 from core.logger import log
 from pathlib import Path
@@ -6,8 +7,9 @@ from pathlib import Path
 def add_game_data(games_data: dict[int, dict], game: Path, console: Path, logs: bool, identifier: int) -> None:
         games_data[identifier] = {
             "original_name": game.stem,
+            "fuzzy_name": normalize(game.stem, full_clean=True),
+            "strict_name": normalize(game.stem, full_clean=False),
             "path": game,
-            "normalized_name": normalize(game.stem, full_clean=True),
             "metadata": {
                 "console": console.name,
                 "size": get_file_byte_size(game) if game.is_file() else get_folder_byte_size(game) 

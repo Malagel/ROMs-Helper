@@ -1,4 +1,5 @@
-from core.utils import is_valid_subfolder, normalize, get_app_base_dir, hide_folder_windows
+from core.helpers.filesystem import is_valid_subfolder, get_app_base_dir, hide_folder_windows
+from core.helpers.text import normalize
 from datetime import datetime
 from core.logger import log
 from pathlib import Path
@@ -13,7 +14,7 @@ def create_renaming_backup(backup_data: list[dict[str, str]]) -> None:
     
     if sys.platform.startswith("win"):
         hide_folder_windows(backup_dir)
-
+    
     backup_file = backup_dir / f"{timestamp}.json" 
 
     with backup_file.open("w", encoding="utf-8") as f:
@@ -67,5 +68,3 @@ def rename_games(path: Path, logs: bool, renamesBackup: bool, validSubfolders: s
         print("If you want to reverse the effects, use the 'reverse renaming' option.")
     else:
         print("No renamed were made since your files already have clean names.")
-        
-                

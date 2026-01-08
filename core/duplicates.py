@@ -1,16 +1,19 @@
-from core.utils import clear_console, prompt_continue, get_app_base_dir, normalize
+from core.helpers.cli import clear_console, prompt_continue 
+from core.helpers.filesystem import get_app_base_dir
+from core.helpers.text import normalize, extract_sequel_numbers
+from core.helpers.exceptions import ClusterTooLargeError
+from core.helpers.constants import( 
+    THRESHOLD_DEFAULT,
+    MAX_THRESHOLD,
+    SEQUEL_PENALTIES,
+    MAX_CLUSTER_SIZE
+    )
 from core.logger import log
 from collections import defaultdict
 from itertools import combinations
 from rapidfuzz import fuzz
 from pathlib import Path
 import shutil
-import time
-
-MAX_CLUSTER_SIZE = 100
-
-class ClusterTooLargeError(Exception):
-    pass
 
 
 def delete_game_paths(game_paths: list[Path], logs: bool, safeDeletion: bool) -> None:
@@ -73,19 +76,26 @@ def build_similarity_graph(games_data: dict[int, dict], threshold: float) -> dic
     game_items = list(games_data.items())
 
     for (id1, data1), (id2, data2) in combinations(game_items, 2):
-        n1 = data1["normalized_name"]
-        n2 = data2["normalized_name"]
-
-        if threshold == 100:
-            n1 = normalize(data1["original_name"])
-            n2 = normalize(data2["original_name"]) 
+        if threshold == MAX_THRESHOLD:
+            n1 = normalize(data1["strict_name"], full_clean=False)
+            n2 = normalize(data2["strict_name"], full_clean=False) 
 
             if n1 == n2:
                 graph[id1].append(id2)
                 graph[id2].append(id1)
             continue
 
+        n1 = data1["fuzzy_name"]
+        n2 = data2["fuzzy_name"]
+        nums1 = extract_sequel_numbers(n1)
+        nums2 = extract_sequel_numbers(n2)
+        
         score = fuzz.token_sort_ratio(n1, n2)
+
+        if (nums1 and not nums2) or (nums2 and not nums1):
+            score *= SEQUEL_PENALTIES["missing_vs_present"]
+        elif nums1 and nums2 and nums1 != nums2:
+            score *= SEQUEL_PENALTIES["different_numbers"]  
 
         if score >= threshold:
             graph[id1].append(id2)
@@ -126,10 +136,13 @@ def get_clusters(games_data: dict[int, dict], threshold: float, logs: bool) -> l
     
 
 def detect_duplicates(games_data: dict[int, dict], confirmation: bool, logs: bool, threshold: float, safeDeletion: bool) -> None:
-    print(f"• Building games with the threshold as {'default' if threshold == 76.0 else threshold}...", end="", flush=True)
+    print(f"• Building games with the threshold as {'default' if threshold == THRESHOLD_DEFAULT else threshold}...", end="", flush=True)
 
     try:
-        clusters = get_clusters(games_data, threshold, logs)
+        clusters = sorted(
+            get_clusters(games_data, threshold, logs), 
+            key=lambda x: games_data[x[0]]["original_name"] 
+        )
     except ClusterTooLargeError:
         msg ="\n[ERROR]: With the current threshold, the number of detected games exceeds 100.\n" \
              "Similarity was detected across too many entries of games, making it unfeasible for displaying.\n" \
@@ -146,14 +159,14 @@ def detect_duplicates(games_data: dict[int, dict], confirmation: bool, logs: boo
         log("[DETECT DUPLICATES]: Showing clusters...")
         for cluster in clusters:
             for id in cluster:
-                log(f"> {games_data[id]['original_name']} -- {games_data[id]['normalized_name']}")
+                log(f"> {games_data[id]['original_name']} -- {games_data[id]['fuzzy_name']}")
             log("[DETECT DUPLICATES]: Next cluster.")
 
     for cluster in clusters:
         clear_console()
         sorted_cluster = sorted(cluster, key=lambda x: games_data[x]["original_name"])
 
-        print(f"Found {len(sorted_cluster)} games with the threshold as {'default' if threshold == 76.0 else threshold}:\n")
+        print(f"Found {len(sorted_cluster)} games with the threshold as {'default' if threshold == THRESHOLD_DEFAULT else threshold}:\n")
         for i, id in enumerate(sorted_cluster, start=1):
             print(f"[{i}] {games_data[id]['original_name']}  →  {games_data[id]['metadata']['console']}")
         
@@ -187,5 +200,6 @@ def detect_duplicates(games_data: dict[int, dict], confirmation: bool, logs: boo
         elif choice == 'quit': break
 
         if not prompt_continue(): break
-    
-    print("\n• Duplicates detection finalized.")
+
+    clear_console()
+    print("• Duplicates detection finalized.")
