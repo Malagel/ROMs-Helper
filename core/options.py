@@ -1,29 +1,24 @@
-from core.logger import log
 from pathlib import Path
 from core.helpers.cli import welcome_message, clear_console
-from core.helpers.constants import THRESHOLD_DEFAULT
+from core.helpers.constants import THRESHOLD_DEFAULT, VALID_SUBFOLDERS_DEFAULT
 
 class Options: 
     def __init__(self):
         self.path: Path | None = None
-        self.renameGames: bool = False
-        self.reverseRenaming: bool = False
-        self.detectDuplicates: bool = False
-        self.duplicatesCustomThreshold: float = THRESHOLD_DEFAULT
-        self.statistics: bool = False
-        self.summary: bool = False
+        self.rename_games: bool = False
+        self.reverse_renaming: bool = False
+        self.detect_duplicates: bool = False
+        self.duplicates_custom_threshold: float = THRESHOLD_DEFAULT
+        self.show_statistics: bool = False
+        self.show_summary: bool = False
         self.logs: bool = False
-        self.renamesBackup: bool = True
-        self.confirmation: bool = True
-        self.safeDeletion: bool = True
-        self.validSubfolders: set[str] = {"single disk", "multi disk", "single-disk", "multi-disk"}
+        self.renames_backup: bool = True
+        self.safe_deletion: bool = True
+        self.require_confirmation: bool = True
+        self.valid_subfolders: set[str] = VALID_SUBFOLDERS_DEFAULT
 
-    def show_values(self):
-        values = []
-        for name, value in vars(self).items():
-            values.append(f"{name}: {value}")
-
-        return values
+    def show_values(self) -> list[str]:
+        return [f"{name}: {value}" for name, value in vars(self).items()]
 
 
 def process_advanced_flags(choices: list[str], opt: Options) -> None:
@@ -31,7 +26,6 @@ def process_advanced_flags(choices: list[str], opt: Options) -> None:
         idx = choices.index('--dd-custom-threshold')
 
         if idx + 1 >= len(choices):
-            print("[ERROR]: The flag '--dd-custom-threshold' did not recieve anything.")
             raise ValueError
         
         value = choices[idx + 1]
@@ -39,28 +33,26 @@ def process_advanced_flags(choices: list[str], opt: Options) -> None:
         threshold = float(value)
 
         if not (1 <= threshold <= 100):
-            print("[ERROR]: The flag '--dd-custom-threshold' recieved an invalid value.")
             raise ValueError
 
-        opt.duplicatesCustomThreshold = threshold
-        opt.detectDuplicates = True
+        opt.duplicates_custom_threshold = threshold
+        opt.detect_duplicates = True
 
     if '--custom-subfolders' in choices:
         idx = choices.index('--custom-subfolders')
 
         if idx + 1 >= len(choices):
-            print("[ERROR]: The flag '--custom-subfolders' did not recieve anything.")
             raise ValueError
 
         extracted = choices[idx + 1].split(',')
         custom_subfolders = {sub.replace('_', ' ').strip().lower() for sub in extracted}
 
-        opt.validSubfolders.update(custom_subfolders)
+        opt.valid_subfolders.update(custom_subfolders)
     
     opt.logs = '--logs' in choices
-    opt.renamesBackup = '--no-renames-backup' not in choices
-    opt.confirmation = '--no-confirmation' not in choices   
-    opt.safeDeletion = '--no-safe-deletion' not in choices 
+    opt.renames_backup = '--no-renames-backup' not in choices
+    opt.require_confirmation = '--no-confirmation' not in choices   
+    opt.safe_deletion = '--no-safe-deletion' not in choices 
 
 
 def get_interactive_options() -> Options:
@@ -86,11 +78,11 @@ def get_interactive_options() -> Options:
     print("\n[INFO]: For advanced options and information of each feature, check the GitHub Page.")
 
     choices = input("\n> ").strip().split()
-    opt.renameGames = '1' in choices
-    opt.reverseRenaming = '2' in choices
-    opt.detectDuplicates = '3' in choices
-    opt.statistics = '4' in choices
-    opt.summary = '5' in choices
+    opt.rename_games = '1' in choices
+    opt.reverse_renaming = '2' in choices
+    opt.detect_duplicates = '3' in choices
+    opt.show_statistics = '4' in choices
+    opt.show_summary = '5' in choices
 
     process_advanced_flags(choices, opt)
 

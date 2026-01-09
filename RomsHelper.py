@@ -1,8 +1,8 @@
 from core.stats.statistics import create_statistics
 from core.duplicates import detect_duplicates
 from core.stats.summary import create_summary
-from core.renaming.rename import rename_games
-from core.renaming.reverse_renaming import reverse_renaming
+from commands.rename import rename_games
+from commands.reverse_renaming import reverse_renaming
 from core.logger import start_logging, stop_logging, log
 from core.fetch_data import get_roms_data
 from core.options import get_interactive_options
@@ -12,7 +12,8 @@ from core.options import get_interactive_options
 def main() -> None:
     try:
         opts = get_interactive_options()
-    except (ValueError, IndexError):
+    except ValueError:
+        print("[ERROR]: Invalid value.")
         input("\nPress enter to exit. ")
         return
     
@@ -20,11 +21,11 @@ def main() -> None:
     data = None
 
     arg_options = [
-        opts.renameGames,
-        opts.detectDuplicates,
-        opts.summary,
-        opts.statistics,
-        opts.reverseRenaming
+        opts.rename_games,
+        opts.detect_duplicates,
+        opts.show_summary,
+        opts.show_statistics,
+        opts.reverse_renaming
     ]   
 
     if not any(arg_options):
@@ -34,38 +35,38 @@ def main() -> None:
     
     if opts.logs: 
         start_logging()
-        log("Starting logging")
+        log("▶ Starting logging")
         log(f"Using this options: {opts.show_values()}")
 
-    if opts.renameGames:
-        if opts.reverseRenaming:
+    if opts.rename_games:
+        if opts.reverse_renaming:
             print("[ERROR]: You can't rename your games and reverse it at the same time...")
             input("\nPress enter to exit. ")
             return
-        rename_games(path, opts.logs, opts.renamesBackup, opts.validSubfolders)
+        rename_games(path, opts)
 
-    if opts.reverseRenaming:
-        reverse_renaming(opts.logs)
+    if opts.reverse_renaming:
+        reverse_renaming(opts)
 
-    if opts.detectDuplicates:
+    if opts.detect_duplicates:
         if not data:
-            data = get_roms_data(path, opts.logs, opts.validSubfolders)
+            data = get_roms_data(path, opts)
 
         detect_duplicates(
             data["games_data"], 
-            opts.confirmation, 
+            opts.require_confirmation, 
             opts.logs, 
-            opts.duplicatesCustomThreshold, 
-            opts.safeDeletion)
+            opts.duplicates_custom_threshold, 
+            opts.safe_deletion)
 
-    if opts.statistics:
-        if not data or opts.detectDuplicates:
-            data = get_roms_data(path, opts.logs, opts.validSubfolders)
+    if opts.show_statistics:
+        if not data or opts.detect_duplicates:
+            data = get_roms_data(path, opts)
 
-        create_statistics(data, opts.logs)
+        create_statistics(data, opts)
 
-    if opts.summary:
-        create_summary(path, opts.logs, opts.validSubfolders)
+    if opts.show_summary:
+        create_summary(path, opts)
 
     if opts.logs: 
         log("Closing logging and saving...")
