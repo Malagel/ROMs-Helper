@@ -14,6 +14,7 @@ def create_backup_path() -> Path:
         hide_folder_windows(backup_dir)
 
     return backup_dir / f"{timestamp}.json" 
+
     
 def create_renaming_backup(backup_data: list[dict[str, str]]) -> None:
 
@@ -21,3 +22,7 @@ def create_renaming_backup(backup_data: list[dict[str, str]]) -> None:
     
     with backup_path.open("w", encoding="utf-8") as f:
         json.dump(backup_data, f, indent=2)
+
+
+def get_available_backups(backup_dir: Path) -> list[Path]:
+    return [backup for backup in sorted(backup_dir.iterdir(), key=lambda b: b.stem, reverse=True)]
