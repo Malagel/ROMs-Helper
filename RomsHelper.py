@@ -1,4 +1,4 @@
-from core.stats.statistics import create_statistics
+from commands.statistics import create_statistics
 from core.duplicates import detect_duplicates
 from core.stats.summary import create_summary
 from commands.rename import rename_games
