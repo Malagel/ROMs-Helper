@@ -9,5 +9,5 @@ tests/
 DELETE/
 logs/
 .renaming_backups/
-statistics/
+/statistics/
 summaries/
