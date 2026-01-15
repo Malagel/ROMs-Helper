@@ -1,4 +1,4 @@
-from core.statistics.paths import get_statistics_path
+from core.helpers.filesystem import create_app_timestamped_path
 from core.statistics.computing import compute_statistics
 from core.statistics.render import generate_statistics_file
 from core.options import Options
@@ -8,17 +8,17 @@ from core.logger import log
 
 def create_statistics(data: dict[str, dict], opts: Options) -> None:
     if opts.logs: log(f"\n▶ Starting creation of statistics...")
-
-    current_time = datetime.now()
     print("• Creating statistics from your collection... ", end="", flush=True)
 
+    current_time = datetime.now()
+
     try:
-        statistics_path = get_statistics_path(current_time)
+        statistics_path = create_app_timestamped_path("statistics", current_time)
         summary = compute_statistics(data)
         generate_statistics_file(summary, statistics_path, current_time)
     except Exception as e:
         print(f"\n[ERROR]: A problem occured creating statistics. {e}") 
-        if opts.logs: log(f"[ERROR]: A problem occured creating statistics. {e}")
+        if opts.logs: log(f"[ERROR]: A problem occured creating statistics. \n{repr(e)}")
         return
     
     print("DONE")

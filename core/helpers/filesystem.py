@@ -1,6 +1,15 @@
 from pathlib import Path
+from datetime import datetime
 import ctypes
 import sys
+
+def create_app_timestamped_path(name: str, current_time: datetime | None) -> Path:
+    if current_time is None: current_time = datetime.now()
+
+    base_dir = get_app_base_dir() / name
+    base_dir.mkdir(parents=True, exist_ok=True)
+
+    return base_dir / f"{name}_{current_time.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
 
 
 def get_folder_byte_size(folder_path: Path) -> int:

@@ -1,6 +1,6 @@
 from commands.statistics import create_statistics
 from core.duplicates import detect_duplicates
-from core.stats.summary import create_summary
+from commands.summary import create_summary
 from commands.rename import rename_games
 from commands.reverse_renaming import reverse_renaming
 from core.logger import start_logging, stop_logging, log
