@@ -8,7 +8,7 @@ class Options:
         self.rename_games: bool = False
         self.reverse_renaming: bool = False
         self.detect_duplicates: bool = False
-        self.duplicates_custom_threshold: float = THRESHOLD_DEFAULT
+        self.duplicates_threshold: float = THRESHOLD_DEFAULT
         self.show_statistics: bool = False
         self.show_summary: bool = False
         self.logs: bool = False
@@ -35,7 +35,7 @@ def process_advanced_flags(choices: list[str], opt: Options) -> None:
         if not (1 <= threshold <= 100):
             raise ValueError
 
-        opt.duplicates_custom_threshold = threshold
+        opt.duplicates_threshold = threshold
         opt.detect_duplicates = True
 
     if '--custom-subfolders' in choices:

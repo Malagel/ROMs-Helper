@@ -1,5 +1,5 @@
 from commands.statistics import create_statistics
-from core.duplicates import detect_duplicates
+from commands.duplicates import detect_duplicates
 from commands.summary import create_summary
 from commands.rename import rename_games
 from commands.reverse_renaming import reverse_renaming
@@ -52,12 +52,7 @@ def main() -> None:
         if not data:
             data = get_roms_data(path, opts)
 
-        detect_duplicates(
-            data["games_data"], 
-            opts.require_confirmation, 
-            opts.logs, 
-            opts.duplicates_custom_threshold, 
-            opts.safe_deletion)
+        detect_duplicates(data["games_data"], opts)
 
     if opts.show_statistics:
         if not data or opts.detect_duplicates:
