@@ -1,9 +1,8 @@
-from helpers.filesystem import create_app_timestamped_path
+from core.helpers.filesystem import create_app_timestamped_path
 from core.helpers.filesystem import is_valid_subfolder
 from core.helpers.text import normalize
 from datetime import datetime
 from pathlib import Path
-
 
 TITLE_LINE = "=" * 75
 SECTION_LINE = "-" * 75
@@ -36,5 +35,3 @@ def generate_summary_file(path: Path, valid_subfolders: set[str], current_time: 
                     f.write(f"{ITEM} {normalize(sub.stem)}\n")
 
             f.write("\n")
-            
-            

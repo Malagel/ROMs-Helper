@@ -4,7 +4,6 @@ from datetime import datetime
 from core.logger import log
 from pathlib import Path
 
-
 def create_summary(path: Path, opts: Options) -> None:
     if opts.logs: log(f"\n▶ Starting creation of summary...")
     print("• Generating summary... ", end="", flush=True)
@@ -22,6 +21,3 @@ def create_summary(path: Path, opts: Options) -> None:
     print("• The file was created inside the 'summaries' folder.")
 
     if opts.logs: log(f"The text file 'summary_{current_time.strftime('%Y-%m-%d_%H-%M-%S')}.txt' was created.")
-
-    
-    

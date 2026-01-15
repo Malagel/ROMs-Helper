@@ -10,4 +10,4 @@ DELETE/
 logs/
 .renaming_backups/
 /statistics/
-summaries/
+summary/
