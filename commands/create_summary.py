@@ -10,13 +10,8 @@ def create_summary(path: Path, opts: Options) -> None:
 
     current_time = datetime.now()
 
-    try:
-        generate_summary_file(path, opts.valid_subfolders, current_time)
-    except Exception as e:
-        print(f"\n[ERROR]: A problem occured creating the summary. {e}") 
-        if opts.logs: log(f"[ERROR]: A problem occured creating the summary. \n{repr(e)}")
-        return
-        
+    generate_summary_file(path, opts.valid_subfolders, current_time)
+
     print("DONE")
     print("• The file was created inside the 'summaries' folder.")
 
