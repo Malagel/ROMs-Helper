@@ -12,14 +12,9 @@ def create_statistics(data: dict[str, dict], opts: Options) -> None:
 
     current_time = datetime.now()
 
-    try:
-        statistics_path = create_app_timestamped_path("statistics", current_time)
-        summary = compute_statistics(data)
-        generate_statistics_file(summary, statistics_path, current_time)
-    except Exception as e:
-        print(f"\n[ERROR]: A problem occured creating statistics. {e}") 
-        if opts.logs: log(f"[ERROR]: A problem occured creating statistics. \n{repr(e)}")
-        return
+    statistics_path = create_app_timestamped_path("statistics", current_time)
+    summary = compute_statistics(data)
+    generate_statistics_file(summary, statistics_path, current_time)
     
     print("DONE")
     print("• The file was created inside the 'statistics' folder.")
