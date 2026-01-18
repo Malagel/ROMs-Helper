@@ -32,7 +32,7 @@ def detect_duplicates(games_data: dict[int, dict], opts: Options) -> None:
     print(f"• Building games with the threshold as {threshold_string}...", end="", flush=True)
 
     try:
-        if opts.logs: log(f"Building similarity graph with threshold {opts.duplicates_threshold}. This can be customized with --dd-custom-threshold.")
+        if opts.logs: log(f"\n▶ Building similarity graph with threshold {opts.duplicates_threshold}. This can be customized with --dd-custom-threshold.")
         clusters = get_clusters(games_data, opts.duplicates_threshold)
     except ClusterTooLargeError:
         msg ="\n[ERROR]: With the current threshold, the number of detected games exceeds 100.\n" \
@@ -42,7 +42,7 @@ def detect_duplicates(games_data: dict[int, dict], opts: Options) -> None:
         if opts.logs: log(msg)
 
         print("\n• Duplicates detection finalized.")
-        return
+        raise
 
     print("DONE")
 

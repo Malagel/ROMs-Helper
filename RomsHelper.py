@@ -1,10 +1,11 @@
-from commands.statistics import create_statistics
+from commands.create_statistics import create_statistics
 from commands.duplicates import detect_duplicates
-from commands.summary import create_summary
+from commands.create_summary import create_summary
 from commands.rename import rename_games
+from commands.scan_roms import scan_roms
 from commands.reverse_renaming import reverse_renaming
+
 from core.logger import start_logging, stop_logging, log
-from core.fetch_data import get_roms_data
 from core.options import get_interactive_options
 
 # Test path: /mnt/d/ROM'S/ROM'S
@@ -50,13 +51,13 @@ def main() -> None:
 
     if opts.detect_duplicates:
         if not data:
-            data = get_roms_data(path, opts)
+            data = fetch_roms_data(path, opts)
 
         detect_duplicates(data["games_data"], opts)
 
     if opts.show_statistics:
         if not data or opts.detect_duplicates:
-            data = get_roms_data(path, opts)
+            data = scan_roms(path, opts)
 
         create_statistics(data, opts)
 
