@@ -1,5 +1,5 @@
 from core.helpers.cli import clear_console, prompt_continue 
-from core.helpers.exceptions import ClusterTooLargeError
+from core.errors import ClusterTooLargeError, AppError
 from core.duplicates.deletion import delete_game_paths
 from core.duplicates.similarity import get_clusters
 from core.helpers.constants import THRESHOLD_DEFAULT
@@ -35,14 +35,10 @@ def detect_duplicates(games_data: dict[int, dict], opts: Options) -> None:
         if opts.logs: log(f"\n▶ Building similarity graph with threshold {opts.duplicates_threshold}. This can be customized with --dd-custom-threshold.")
         clusters = get_clusters(games_data, opts.duplicates_threshold)
     except ClusterTooLargeError:
-        msg ="\n[ERROR]: With the current threshold, the number of detected games exceeds 100.\n" \
-             "Similarity was detected across too many entries of games, making it unfeasible for displaying.\n" \
+        raise("With the current threshold, the number of detected games exceeds 100.\n" 
+             "Similarity was detected across too many entries of games, making it unfeasible for displaying.\n" 
              "Please try again with a higher threshold value."
-        print(msg)
-        if opts.logs: log(msg)
-
-        print("\n• Duplicates detection finalized.")
-        raise
+        )
 
     print("DONE")
 
@@ -77,20 +73,18 @@ def detect_duplicates(games_data: dict[int, dict], opts: Options) -> None:
                 
                 game_paths = [games_data[sorted_cluster[idx]]['path'] for idx in indices]
 
-            except (ValueError, IndexError):
+            except ValueError:
                 print(f"[ERROR]: The value is invalid, try again")
                 continue
 
             if confirm_delete(game_paths, opts.require_confirmation, opts.safe_deletion):
-                try: 
+                try:
                     delete_game_paths(game_paths, opts.safe_deletion)
-                except Exception as e:
-                    print(
-                        "[ERROR]: A problem ocurred trying to" 
-                        f"{'move' if opts.safe_deletion else 'delete'} your gamefiles.\n{e}"
-                        )
-                    return
-                
+                except PermissionError as e:
+                    raise AppError(
+                        "You do not have permission to modify this folder."
+                    ) from e
+
                 print(
                     f"• {'Moved' if opts.safe_deletion else 'Deleted'} " 
                     f"{len(game_paths)} "
