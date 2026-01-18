@@ -1,5 +1,5 @@
 from core.helpers.text import normalize, extract_sequel_numbers
-from core.helpers.exceptions import ClusterTooLargeError
+from core.errors import ClusterTooLargeError
 from collections import defaultdict
 from itertools import combinations
 from rapidfuzz import fuzz
