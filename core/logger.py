@@ -18,5 +18,4 @@ def log(msg: str) -> None:
 
 
 def stop_logging():
-    print("• Log file saved in logs folder.")
     log_file.close()
