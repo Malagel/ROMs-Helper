@@ -62,11 +62,11 @@ def reverse_renaming(opts: Options) -> None:
         try:
             apply_rename(new_path, old_path)
             if opts.logs: log(f"Renamed correctly {new_path.name} to {old_path.name}")
-        except (FileExistsError, FileNotFoundError, PermissionError, OSError) as e:
+        except (FileExistsError, FileNotFoundError, OSError) as e:
             if opts.logs: log(f"[ERROR]: Failed to rename {new_path}. {e}")
     print("DONE")
 
-    print("Do you want to remove the backup used? [y/N]:")
+    print("\nDo you want to remove the backup used? [y/N]:")
     answer = input("> ").strip().lower()
     if answer == "y":
         available_backups[chosen_index].unlink()
