@@ -1,3 +1,0 @@
-class ClusterTooLargeError(Exception):
-    pass
-
