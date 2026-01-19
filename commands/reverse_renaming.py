@@ -2,6 +2,7 @@ from core.renaming.backup import get_available_backups
 from core.helpers.filesystem import get_app_base_dir
 from core.renaming.operations import apply_rename
 from core.renaming.traversal import traverse_json
+from core.errors import AppError
 from core.options import Options
 from datetime import datetime
 from core.logger import log
@@ -62,8 +63,12 @@ def reverse_renaming(opts: Options) -> None:
         try:
             apply_rename(new_path, old_path)
             if opts.logs: log(f"Renamed correctly {new_path.name} to {old_path.name}")
-        except (FileExistsError, FileNotFoundError, OSError) as e:
+        except (FileExistsError, FileNotFoundError) as e:
             if opts.logs: log(f"[ERROR]: Failed to rename {new_path}. {e}")
+        except PermissionError as e:
+            raise AppError("You do not have permission to modify this files.") from e
+        except OSError as e:
+            raise AppError("Failed to rename the file due to a filesystem error.") from e
     print("DONE")
 
     print("\nDo you want to remove the backup used? [y/N]:")

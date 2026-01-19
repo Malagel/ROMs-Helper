@@ -20,28 +20,26 @@ def main() -> None:
         _run(opts)
     except AppError as e:
         print(f"[ERROR]: {e}")
-        if opts.logs:
+        if opts and opts.logs:
             log(f"[ERROR]: {e}")
 
-        if opts.debug:
+        if opts and opts.debug:
             raise
     except Exception as e:
         print(f"[FATAL]: A fatal error ocurred. Please reach out through the GitHub page:")
         print("https://github.com/Malagel/ROMs-Helper\n")
-        if opts.logs:
-            log(f"[FATAL]: A fatal error ocurred. {e}")
-        raise
+        if opts and opts.logs:
+            log(f"[FATAL]: A fatal error ocurred. \n{repr(e)}")
     finally:
         if opts and opts.logs:
-            stop_logging()
+            stop_logging()  
 
     input("\nPress enter to exit. ")   
 
 
 def _run(opts: Options) -> None:
     path = opts.path
-
-    if opts.logs: 
+    if opts and opts.logs: 
         start_logging()
         log("▶ Starting logging")
         log(f"Using this options: {opts.show_values()}")

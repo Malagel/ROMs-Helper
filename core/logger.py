@@ -18,4 +18,5 @@ def log(msg: str) -> None:
 
 
 def stop_logging():
-    log_file.close()
+    if log_file is not None:
+        log_file.close()

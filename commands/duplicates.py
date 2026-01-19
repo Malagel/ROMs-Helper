@@ -39,7 +39,7 @@ def detect_duplicates(games_data: dict[int, dict], opts: Options) -> None:
              "Similarity was detected across too many entries of games, making it unfeasible for displaying.\n" 
              "Please try again with a higher threshold value."
         )
-
+    
     print("DONE")
 
     if opts.logs:

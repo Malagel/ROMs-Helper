@@ -2,6 +2,7 @@ from core.renaming.traversal import traverse_folder
 from core.renaming.operations import compute_new_path, apply_rename
 from core.renaming.backup import create_renaming_backup
 from core.options import Options
+from core.errors import AppError
 from core.logger import log
 from pathlib import Path
 
@@ -24,8 +25,12 @@ def rename_games(path: Path, opts: Options) -> None:
             if opts.logs: log(f"[INFO]: Renamed '{game_path.name}' -> '{new_path.name}'")
             
             files_renamed_count += 1
-        except (FileExistsError, FileNotFoundError, OSError) as e:
+        except (FileExistsError, FileNotFoundError) as e:
             if opts.logs: log(f"[ERROR]: Skipping '{new_path.name}'. {e}.")
+        except PermissionError as e:
+            raise AppError("You do not have permission to modify this files.") from e
+        except OSError as e:
+            raise AppError("Failed to rename the file due to a filesystem error.") from e
         
     if opts.renames_backup and backup_data:
         create_renaming_backup(backup_data)
