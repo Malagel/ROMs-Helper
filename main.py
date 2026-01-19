@@ -55,7 +55,6 @@ def _run(opts: Options) -> None:
     if not any(arg_options):
         raise AppError("There were no actions provided.")
     
-
     if opts.rename_games:
         if opts.reverse_renaming:
             raise AppError("You can't rename your games and reverse it at the same time...")
