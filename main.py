@@ -9,11 +9,13 @@ from commands.interactive_options import get_interactive_options
 from core.logger import start_logging, stop_logging, log
 from core.options import Options
 from core.errors import AppError
+from core.helpers.cli import clear_console
 
 # Test path: /mnt/d/ROM'S/ROM'S
 
 def main() -> None:
     opts: Options | None = None
+    clear_console()
 
     try:
         opts = get_interactive_options()
@@ -34,7 +36,7 @@ def main() -> None:
         if opts and opts.logs:
             stop_logging()  
 
-    input("\nPress enter to exit. ")   
+    input("\nPress Enter to exit... ")   
 
 
 def _run(opts: Options) -> None:
