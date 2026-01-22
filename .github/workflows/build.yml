@@ -1,0 +1,95 @@
+name: Build RomsHelper
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  # -----------------------------
+  # Linux
+  # -----------------------------
+  linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Clean dist
+        run: rm -rf dist/*
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Build binary
+        run: pyinstaller --onefile RomsHelper.py
+      - name: Add Linux wrapper
+        run: cp wrapper-scripts/run-RomsHelper.sh dist/
+      - name: Make everything executable
+        run: chmod +x dist/*
+      - name: Zip Linux bundle
+        run: cd dist && zip -r RomsHelper-linux.zip RomsHelper run-RomsHelper.sh
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: RomsHelper-linux
+          path: dist/RomsHelper-linux.zip
+
+  # -----------------------------
+  # Windows
+  # -----------------------------
+  windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Clean dist
+        run: Remove-Item -Recurse -Force dist\*
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Build binary
+        run: pyinstaller --onefile RomsHelper.py
+      - name: Zip Windows bundle
+        run: powershell Compress-Archive -Path dist\RomsHelper.exe -DestinationPath dist\RomsHelper-win.zip
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: RomsHelper-win
+          path: dist/RomsHelper-win.zip
+
+  # -----------------------------
+  # macOS
+  # -----------------------------
+  mac:
+    name: Build macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Clean dist
+        run: rm -rf dist/*
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Build binary
+        run: pyinstaller --onefile RomsHelper.py
+      - name: Prepare .app bundle
+        run: |
+          mkdir -p dist/RomsHelper.app/Contents/MacOS
+          osacompile -o dist/RomsHelper.app/Contents/MacOS/RomsHelperLauncher wrapper-scripts/MacOS/RomsHelperLauncher.applescript
+          cp dist/RomsHelper dist/RomsHelper.app/Contents/MacOS/
+          cp wrapper-scripts/MacOS/Info.plist dist/RomsHelper.app/Contents/
+          chmod +x dist/RomsHelper.app/Contents/MacOS/*
+      - name: Zip macOS bundle
+        run: cd dist && zip -r RomsHelper-mac.zip RomsHelper.app
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: RomsHelper-mac
+          path: dist/RomsHelper-mac.zip
