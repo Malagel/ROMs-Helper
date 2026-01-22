@@ -24,7 +24,7 @@ jobs:
       - name: Build binary
         run: pyinstaller --onefile RomsHelper.py
       - name: Add Linux wrapper
-        run: cp wrapper-scripts/run-RomsHelper.sh dist/
+        run: cp wrapper-scripts/Linux/run-RomsHelper.sh dist/
       - name: Make everything executable
         run: chmod +x dist/*
       - name: Zip Linux bundle
