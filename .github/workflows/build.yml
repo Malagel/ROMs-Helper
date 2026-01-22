@@ -30,7 +30,7 @@ jobs:
       - name: Zip Linux bundle
         run: cd dist && zip -r RomsHelper-linux.zip RomsHelper run-RomsHelper.sh
       - name: Upload Linux artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: RomsHelper-linux
           path: dist/RomsHelper-linux.zip
@@ -56,7 +56,7 @@ jobs:
       - name: Zip Windows bundle
         run: powershell Compress-Archive -Path dist\RomsHelper.exe -DestinationPath dist\RomsHelper-win.zip
       - name: Upload Windows artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: RomsHelper-win
           path: dist/RomsHelper-win.zip
@@ -89,7 +89,7 @@ jobs:
       - name: Zip macOS bundle
         run: cd dist && zip -r RomsHelper-mac.zip RomsHelper.app
       - name: Upload macOS artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: RomsHelper-mac
           path: dist/RomsHelper-mac.zip
