@@ -12,7 +12,7 @@ jobs:
     name: Build Linux
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Clean dist
         run: rm -rf dist/*
       - name: Set up Python
@@ -22,13 +22,13 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build binary
-        run: pyinstaller --onefile --paths . RomsHelper.py
+        run: pyinstaller --clean --onefile --paths . RomsHelper.py
       - name: Make everything executable
         run: chmod +x dist/*
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RomsHelper-linux
+          name: RomsHelper-linux-x86_64
           path: dist/
 
   # -----------------------------
@@ -38,7 +38,7 @@ jobs:
     name: Build Windows
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Clean dist
         run: Remove-Item -Recurse -Force dist\* -ErrorAction SilentlyContinue
       - name: Set up Python
@@ -48,11 +48,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build binary
-        run: pyinstaller --onefile --paths . RomsHelper.py
+        run: pyinstaller --clean --onefile --paths . --icon assets/icon.ico RomsHelper.py
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RomsHelper-win
+          name: RomsHelper-windows-x86_64
           path: dist/
 
   # -----------------------------
@@ -62,7 +62,7 @@ jobs:
     name: Build macOS
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Clean dist
         run: rm -rf dist/*
       - name: Set up Python
@@ -72,16 +72,30 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build binary
-        run: pyinstaller --onefile --paths . RomsHelper.py
+        run: pyinstaller --clean --onefile --paths . RomsHelper.py
+      - name: Build macOS icon
+        run: |
+          mkdir RomsHelper.iconset
+          sips -z 16 16     assets/icon.png --out RomsHelper.iconset/icon_16x16.png
+          sips -z 32 32     assets/icon.png --out RomsHelper.iconset/icon_16x16@2x.png
+          sips -z 32 32     assets/icon.png --out RomsHelper.iconset/icon_32x32.png
+          sips -z 64 64     assets/icon.png --out RomsHelper.iconset/icon_32x32@2x.png
+          sips -z 128 128   assets/icon.png --out RomsHelper.iconset/icon_128x128.png
+          sips -z 256 256   assets/icon.png --out RomsHelper.iconset/icon_128x128@2x.png
+          sips -z 256 256   assets/icon.png --out RomsHelper.iconset/icon_256x256.png
+          sips -z 512 512   assets/icon.png --out RomsHelper.iconset/icon_256x256@2x.png
+          sips -z 512 512   assets/icon.png --out RomsHelper.iconset/icon_512x512.png
+          sips -z 1024 1024 assets/icon.png --out RomsHelper.iconset/icon_512x512@2x.png
+          iconutil -c icns RomsHelper.iconset
       - name: Prepare .app bundle
         run: |
-          mkdir -p dist/RomsHelper.app/Contents/MacOS
-          osacompile -o dist/RomsHelper.app/Contents/MacOS/RomsHelperLauncher wrapper-scripts/MacOS/RomsHelperLauncher.applescript
+          mkdir -p dist/RomsHelper.app/Contents/{MacOS,Resources}
           cp dist/RomsHelper dist/RomsHelper.app/Contents/MacOS/
+          cp RomsHelper.icns dist/RomsHelper.app/Contents/Resources/
           cp wrapper-scripts/MacOS/Info.plist dist/RomsHelper.app/Contents/
           chmod +x dist/RomsHelper.app/Contents/MacOS/*
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RomsHelper-mac
+          name: RomsHelper-macos-universal
           path: dist/
