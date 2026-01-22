@@ -44,7 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Clean dist
-        run: Remove-Item -Recurse -Force dist\*
+        run: Remove-Item -Recurse -Force dist\* -ErrorAction SilentlyContinue
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
