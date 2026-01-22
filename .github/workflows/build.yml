@@ -94,6 +94,8 @@ jobs:
           cp RomsHelper.icns dist/RomsHelper.app/Contents/Resources/
           cp wrapper-scripts/MacOS/Info.plist dist/RomsHelper.app/Contents/
           chmod +x dist/RomsHelper.app/Contents/MacOS/*
+      - name: Remove standalone binary
+        run: rm -f dist/RomsHelper
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
