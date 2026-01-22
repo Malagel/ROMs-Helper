@@ -22,18 +22,16 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build binary
-        run: pyinstaller --onefile RomsHelper.py
+        run: pyinstaller --onefile --paths . RomsHelper.py
       - name: Add Linux wrapper
         run: cp wrapper-scripts/Linux/run-RomsHelper.sh dist/
       - name: Make everything executable
         run: chmod +x dist/*
-      - name: Zip Linux bundle
-        run: cd dist && zip -r RomsHelper-linux.zip RomsHelper run-RomsHelper.sh
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
           name: RomsHelper-linux
-          path: dist/RomsHelper-linux.zip
+          path: dist/
 
   # -----------------------------
   # Windows
@@ -52,14 +50,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build binary
-        run: pyinstaller --onefile RomsHelper.py
-      - name: Zip Windows bundle
-        run: powershell Compress-Archive -Path dist\RomsHelper.exe -DestinationPath dist\RomsHelper-win.zip
+        run: pyinstaller --onefile --paths . RomsHelper.py
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: RomsHelper-win
-          path: dist/RomsHelper-win.zip
+          path: dist/
 
   # -----------------------------
   # macOS
@@ -78,7 +74,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build binary
-        run: pyinstaller --onefile RomsHelper.py
+        run: pyinstaller --onefile --paths . RomsHelper.py
       - name: Prepare .app bundle
         run: |
           mkdir -p dist/RomsHelper.app/Contents/MacOS
@@ -86,10 +82,8 @@ jobs:
           cp dist/RomsHelper dist/RomsHelper.app/Contents/MacOS/
           cp wrapper-scripts/MacOS/Info.plist dist/RomsHelper.app/Contents/
           chmod +x dist/RomsHelper.app/Contents/MacOS/*
-      - name: Zip macOS bundle
-        run: cd dist && zip -r RomsHelper-mac.zip RomsHelper.app
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: RomsHelper-mac
-          path: dist/RomsHelper-mac.zip
+          path: dist/
