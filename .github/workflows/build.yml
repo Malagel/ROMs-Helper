@@ -23,8 +23,6 @@ jobs:
         run: pip install -r requirements.txt
       - name: Build binary
         run: pyinstaller --onefile --paths . RomsHelper.py
-      - name: Add Linux wrapper
-        run: cp wrapper-scripts/Linux/run-RomsHelper.sh dist/
       - name: Make everything executable
         run: chmod +x dist/*
       - name: Upload Linux artifact
