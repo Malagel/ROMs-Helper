@@ -32,17 +32,17 @@ def rename_games(path: Path, opts: Options) -> None:
         except OSError as e:
             raise AppError("Failed to rename the file due to a filesystem error.") from e
         
-    if opts.renames_backup and backup_data:
-        create_renaming_backup(backup_data)
-        if opts.logs: log("[INFO]: Created filenames backup for restoration.")
-
     print("DONE")
 
     if files_renamed_count:
         print(f"• The tool renamed {files_renamed_count} file{'s' if files_renamed_count > 1 else ''}.")
-        print("[INFO]: If you want to reverse the effects, use the 'reverse renaming' option.")
         if opts.logs: log(f"[INFO]: Finished renaming gamefiles. Files renamed: {files_renamed_count}.")
-        
     else:
         print("No renames were made. Your files are clean already.")
         if opts.logs: log("[INFO]: Finished renaming. No files were renamed.")
+        
+    if opts.renames_backup and backup_data:
+        create_renaming_backup(backup_data)
+        if opts.logs: log("[INFO]: Created filenames backup for restoration.")
+        print("[INFO]: If you want to reverse the effects, use the 'reverse renaming' option.")
+
