@@ -43,7 +43,7 @@ def get_interactive_options() -> Options:
     welcome_message()
 
     while True:
-        print("Enter the path to your ROMs folder to start:")
+        print("Drag n' Drop your ROMs Folder, or paste it's path to start:")
         folder = input("> ").strip()
         path = Path(folder)
 
