@@ -62,7 +62,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ROMsHelper-windows-x86_64
-          path: dist/
+          path: package/
 
   # -----------------------------
   # macOS
@@ -103,8 +103,10 @@ jobs:
           cp ROMsHelper.icns dist/ROMsHelper.app/Contents/Resources/
           cp wrapper-scripts/MacOS/Info.plist dist/ROMsHelper.app/Contents/
           chmod +x dist/ROMsHelper.app/Contents/MacOS/*
-      - name: Remove standalone binary
-        run: rm -f dist/ROMsHelper
+      - name: Remove leftovers
+        run: |
+          rm -f dist/ROMsHelper
+          rm -rf ROMsHelper.iconset
       - name: Prepare MacOS Package
         run: |
           mkdir -p package/ROMsHelper
@@ -112,5 +114,5 @@ jobs:
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ROMsHelper-macos-universal
+          name: ROMsHelper-macos-x86_64
           path: package/
