@@ -25,11 +25,15 @@ jobs:
         run: pyinstaller --clean --onefile --paths . ROMsHelper.py
       - name: Make everything executable
         run: chmod +x dist/*
+      - name: Prepare Linux Package
+        run: |
+          mkdir -p package/ROMsHelper
+          mv dist/* package/ROMsHelper/
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
           name: ROMsHelper-linux-x86_64
-          path: dist/
+          path: package/
 
   # -----------------------------
   # Windows
@@ -49,6 +53,11 @@ jobs:
         run: pip install -r requirements.txt
       - name: Build binary
         run: pyinstaller --clean --onefile --paths . --icon assets/icon.ico ROMsHelper.py
+      - name: Prepare Windows package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force package\ROMsHelper | Out-Null
+          Move-Item dist\* package\ROMsHelper\
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
@@ -96,8 +105,12 @@ jobs:
           chmod +x dist/ROMsHelper.app/Contents/MacOS/*
       - name: Remove standalone binary
         run: rm -f dist/ROMsHelper
+      - name: Prepare MacOS Package
+        run: |
+          mkdir -p package/ROMsHelper
+          mv dist/* package/ROMsHelper/
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: ROMsHelper-macos-universal
-          path: dist/
+          path: package/
