@@ -1,4 +1,4 @@
-name: Build RomsHelper
+name: Build ROMsHelper
 
 on:
   workflow_dispatch:
@@ -22,13 +22,13 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build binary
-        run: pyinstaller --clean --onefile --paths . RomsHelper.py
+        run: pyinstaller --clean --onefile --paths . ROMsHelper.py
       - name: Make everything executable
         run: chmod +x dist/*
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RomsHelper-linux-x86_64
+          name: ROMsHelper-linux-x86_64
           path: dist/
 
   # -----------------------------
@@ -48,11 +48,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build binary
-        run: pyinstaller --clean --onefile --paths . --icon assets/icon.ico RomsHelper.py
+        run: pyinstaller --clean --onefile --paths . --icon assets/icon.ico ROMsHelper.py
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RomsHelper-windows-x86_64
+          name: ROMsHelper-windows-x86_64
           path: dist/
 
   # -----------------------------
@@ -72,32 +72,32 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build binary
-        run: pyinstaller --clean --onefile --paths . RomsHelper.py
+        run: pyinstaller --clean --onefile --paths . ROMsHelper.py
       - name: Build macOS icon
         run: |
-          mkdir RomsHelper.iconset
-          sips -z 16 16     assets/icon.png --out RomsHelper.iconset/icon_16x16.png
-          sips -z 32 32     assets/icon.png --out RomsHelper.iconset/icon_16x16@2x.png
-          sips -z 32 32     assets/icon.png --out RomsHelper.iconset/icon_32x32.png
-          sips -z 64 64     assets/icon.png --out RomsHelper.iconset/icon_32x32@2x.png
-          sips -z 128 128   assets/icon.png --out RomsHelper.iconset/icon_128x128.png
-          sips -z 256 256   assets/icon.png --out RomsHelper.iconset/icon_128x128@2x.png
-          sips -z 256 256   assets/icon.png --out RomsHelper.iconset/icon_256x256.png
-          sips -z 512 512   assets/icon.png --out RomsHelper.iconset/icon_256x256@2x.png
-          sips -z 512 512   assets/icon.png --out RomsHelper.iconset/icon_512x512.png
-          sips -z 1024 1024 assets/icon.png --out RomsHelper.iconset/icon_512x512@2x.png
-          iconutil -c icns RomsHelper.iconset
+          mkdir ROMsHelper.iconset
+          sips -z 16 16     assets/icon.png --out ROMsHelper.iconset/icon_16x16.png
+          sips -z 32 32     assets/icon.png --out ROMsHelper.iconset/icon_16x16@2x.png
+          sips -z 32 32     assets/icon.png --out ROMsHelper.iconset/icon_32x32.png
+          sips -z 64 64     assets/icon.png --out ROMsHelper.iconset/icon_32x32@2x.png
+          sips -z 128 128   assets/icon.png --out ROMsHelper.iconset/icon_128x128.png
+          sips -z 256 256   assets/icon.png --out ROMsHelper.iconset/icon_128x128@2x.png
+          sips -z 256 256   assets/icon.png --out ROMsHelper.iconset/icon_256x256.png
+          sips -z 512 512   assets/icon.png --out ROMsHelper.iconset/icon_256x256@2x.png
+          sips -z 512 512   assets/icon.png --out ROMsHelper.iconset/icon_512x512.png
+          sips -z 1024 1024 assets/icon.png --out ROMsHelper.iconset/icon_512x512@2x.png
+          iconutil -c icns ROMsHelper.iconset
       - name: Prepare .app bundle
         run: |
-          mkdir -p dist/RomsHelper.app/Contents/{MacOS,Resources}
-          cp dist/RomsHelper dist/RomsHelper.app/Contents/MacOS/
-          cp RomsHelper.icns dist/RomsHelper.app/Contents/Resources/
-          cp wrapper-scripts/MacOS/Info.plist dist/RomsHelper.app/Contents/
-          chmod +x dist/RomsHelper.app/Contents/MacOS/*
+          mkdir -p dist/ROMsHelper.app/Contents/{MacOS,Resources}
+          cp dist/ROMsHelper dist/ROMsHelper.app/Contents/MacOS/
+          cp ROMsHelper.icns dist/ROMsHelper.app/Contents/Resources/
+          cp wrapper-scripts/MacOS/Info.plist dist/ROMsHelper.app/Contents/
+          chmod +x dist/ROMsHelper.app/Contents/MacOS/*
       - name: Remove standalone binary
-        run: rm -f dist/RomsHelper
+        run: rm -f dist/ROMsHelper
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RomsHelper-macos-universal
+          name: ROMsHelper-macos-universal
           path: dist/
