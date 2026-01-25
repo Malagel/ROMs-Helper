@@ -2,8 +2,9 @@ from core.helpers.filesystem import create_app_timestamped_path
 from core.statistics.computing import compute_statistics
 from core.statistics.render import generate_statistics_file
 from core.options import Options
-from datetime import datetime
 from core.logger import log
+
+from datetime import datetime
 
 
 def create_statistics(data: dict[str, dict], opts: Options) -> None:

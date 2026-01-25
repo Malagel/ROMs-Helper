@@ -8,8 +8,8 @@ class Options:
         self.rename_games: bool = False
         self.reverse_renaming: bool = False
         self.detect_duplicates: bool = False
-        self.show_statistics: bool = False
-        self.show_summary: bool = False
+        self.create_statistics: bool = False
+        self.create_summary: bool = False
         self.logs: bool = False
         self.debug: bool = False
 

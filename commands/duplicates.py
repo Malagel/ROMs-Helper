@@ -10,7 +10,7 @@ from pathlib import Path
 def confirm_delete(game_paths: list[Path], require_confirmation: bool, safe_deletion: bool) -> bool:
     if not require_confirmation: return True
 
-    sentence = 'This game path' if len(game_paths) == 1 else 'These game paths'
+    sentence = '• This game path' if len(game_paths) == 1 else '• These game paths'
     action = "moved to the 'DELETE' folder" if safe_deletion else "deleted permanently"
     print(f"\n{sentence} will be {action}:")
 
@@ -53,7 +53,7 @@ def detect_duplicates(games_data: dict[int, dict], opts: Options) -> None:
         clear_console()
         sorted_cluster = sorted(cluster, key=lambda x: games_data[x]["original_name"])
 
-        print(f"Found {len(sorted_cluster)} games with the threshold as {threshold_string}:\n")
+        print(f"• Found {len(sorted_cluster)} games with the threshold as {threshold_string}:\n")
         for i, id in enumerate(sorted_cluster, start=1):
             print(f"[{i}] {games_data[id]['original_name']}  →  {games_data[id]['metadata']['console']}")
         
