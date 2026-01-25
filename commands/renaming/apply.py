@@ -1,19 +1,19 @@
+from core.renaming.backup import create_renaming_backup
 from core.renaming.traversal import traverse_folder
 from core.renaming.operations import compute_new_path, apply_rename
-from core.renaming.backup import create_renaming_backup
-from core.options import Options
+
 from core.errors import AppError
 from core.logger import log
-from pathlib import Path
+from core.options import Options
 
-def rename_games(path: Path, opts: Options) -> None:
+def apply_renaming(opts: Options):
     backup_data: list[dict[str, str]] = []
     files_renamed_count = 0
 
     print("• Renaming all your gamefiles... ", end="", flush=True)
     if opts.logs: log(f"\n▶ Starting the renaming of gamefiles now...")
     
-    for game_path in traverse_folder(path, opts.valid_subfolders):
+    for game_path in traverse_folder(opts.path, opts.valid_subfolders):
         new_path = compute_new_path(game_path)
         if new_path is None: 
             continue
@@ -44,5 +44,4 @@ def rename_games(path: Path, opts: Options) -> None:
     if opts.renames_backup and backup_data:
         create_renaming_backup(backup_data)
         if opts.logs: log("[INFO]: Created filenames backup for restoration.")
-        print("[INFO]: If you want to reverse the effects, use the 'reverse renaming' option.")
-
+        print("[INFO]: If you want to reverse the effects, use the '--reverse-renaming' advanced option.")

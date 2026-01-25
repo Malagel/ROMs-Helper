@@ -1,13 +1,14 @@
 from core.renaming.backup import get_available_backups
-from core.helpers.filesystem import get_app_base_dir
 from core.renaming.operations import apply_rename
 from core.renaming.traversal import traverse_json
+
+from core.helpers.filesystem import get_app_base_dir
 from core.errors import AppError
 from core.options import Options
-from datetime import datetime
 from core.logger import log
-from pathlib import Path
 
+from datetime import datetime
+from pathlib import Path
 
 def choose_backup_index(backups_available: list[Path]) -> int | None:
     print("More than one backup for renaming was found (Day/Month/Year):\n")
