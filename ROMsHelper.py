@@ -1,7 +1,7 @@
 from commands.create_statistics import create_statistics
-from commands.duplicates import detect_duplicates
+from commands.duplicates.command import detect_duplicates
 from commands.create_summary import create_summary
-from commands.renaming.rename import rename_games
+from commands.renaming.command import rename_games
 from commands.scan_roms import scan_roms
 from commands.interactive_options import get_interactive_options
 
@@ -9,6 +9,8 @@ from core.logger import start_logging, stop_logging, log
 from core.options import Options
 from core.errors import AppError
 from core.helpers.cli import clear_console
+
+from pprint import pformat
 
 # Test path: /mnt/d/ROM'S/ROM'S
 
@@ -20,17 +22,18 @@ def main() -> None:
         opts = get_interactive_options()
         _run(opts)
     except AppError as e:
-        print(f"[ERROR]: {e}")
+        print(f"\n[ERROR]: {e}")
         if opts and opts.logs:
             log(f"[ERROR]: {e}")
-
         if opts and opts.debug:
             raise
     except Exception as e:
-        print(f"[FATAL]: A fatal error ocurred. Please reach out through the GitHub page:")
+        print(f"\n[FATAL]: A fatal error ocurred. Please reach out through the GitHub page:")
         print("https://github.com/Malagel/ROMs-Helper\n")
         if opts and opts.logs:
             log(f"[FATAL]: A fatal error ocurred. \n{repr(e)}")
+        if opts and opts.debug:
+            raise
     finally:
         if opts and opts.logs:
             stop_logging()  
@@ -42,14 +45,13 @@ def _run(opts: Options) -> None:
     if opts and opts.logs: 
         start_logging()
         log("▶ Starting logging")
-        log(f"Using this options: {opts.show_values()}")
+        log(f"Using this options: \n{pformat(opts.show_values())}")
 
     arg_options = [
         opts.rename_games,
         opts.detect_duplicates,
         opts.create_summary,
         opts.create_statistics,
-        opts.reverse_renaming
     ]   
 
     if not any(arg_options):
