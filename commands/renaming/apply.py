@@ -11,7 +11,7 @@ def apply_renaming(opts: Options):
     files_renamed_count = 0
 
     print("• Renaming all your gamefiles... ", end="", flush=True)
-    if opts.logs: log(f"\n▶ Starting the renaming of gamefiles now...")
+    if opts.logs: log(f"▶ Starting the renaming of gamefiles now...", True)
     
     for game_path in traverse_folder(opts.path, opts.valid_subfolders):
         new_path = compute_new_path(game_path)

@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 def create_summary(opts: Options) -> None:
-    if opts.logs: log(f"\n▶ Starting creation of summary...")
+    if opts.logs: log(f"▶ Starting creation of summary...", True)
     print("• Generating summary... ", end="", flush=True)
 
     current_time = datetime.now()

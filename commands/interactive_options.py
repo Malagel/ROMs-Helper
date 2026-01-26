@@ -39,7 +39,6 @@ def parse_advanced_flags(choices: list[str], opt: Options) -> None:
     opt.safe_deletion = '--no-safe-deletion' not in choices 
 
 
-
 def get_interactive_options() -> Options:
     opt = Options()
     welcome_message()

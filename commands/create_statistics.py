@@ -1,14 +1,13 @@
-from core.helpers.filesystem import create_app_timestamped_path
 from core.statistics.computing import compute_statistics
 from core.statistics.render import generate_statistics_file
+from core.helpers.filesystem import create_app_timestamped_path
 from core.options import Options
 from core.logger import log
 
 from datetime import datetime
 
-
 def create_statistics(data: dict[str, dict], opts: Options) -> None:
-    if opts.logs: log(f"\n▶ Starting creation of statistics...")
+    if opts.logs: log(f"▶ Starting creation of statistics...", True)
     print("• Creating statistics from your collection... ", end="", flush=True)
 
     current_time = datetime.now()

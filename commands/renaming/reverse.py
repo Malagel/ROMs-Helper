@@ -37,7 +37,7 @@ def choose_backup_index(backups_available: list[Path]) -> int | None:
 
 def reverse_renaming(opts: Options) -> None:
     backup_dir = get_app_base_dir() / ".renaming_backups"
-    if opts.logs: log(f"\n▶ Starting the renaming of gamefiles from backup now...")
+    if opts.logs: log(f"▶ Starting the renaming of gamefiles from backup now...", True)
 
     if not backup_dir.exists():
         print("[ERROR]: There is no backup folder available.")

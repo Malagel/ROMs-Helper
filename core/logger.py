@@ -11,9 +11,9 @@ def start_logging():
     log_file = logs_path.open("a", encoding="utf-8")
 
 
-def log(msg: str) -> None:
+def log(msg: str, jump=False) -> None:
     timestamp = datetime.now().isoformat(timespec="milliseconds")
-    log_file.write(f"[{timestamp}]{msg}\n")
+    log_file.write(f"{'\n' if jump else ''}[{timestamp}] {msg}\n")
     log_file.flush()
 
 

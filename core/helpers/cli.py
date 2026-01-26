@@ -5,7 +5,7 @@ def clear_console() -> None:
 
 
 def prompt_continue() -> bool:
-    print("\nPress enter to continue or type 'quit' to exit:")
+    print("\nPress Enter to continue or type 'quit' to exit:")
     return input("> ").strip().lower() != "quit"
 
 

@@ -48,7 +48,9 @@ def dfs_clusters(graph: dict[int, list[int]], node: int, visited: set, cluster: 
     cluster.append(node)
 
     if len(cluster) > MAX_CLUSTER_SIZE: 
-        raise ClusterTooLargeError
+        raise ClusterTooLargeError("With the current threshold, the number of detected games exceeds 100.\n" 
+            "Similarity was detected across too many entries of games, making it unfeasible for displaying.\n" 
+            "Please try again with a higher threshold value.")
 
     for neighbor in graph[node]:
         if neighbor not in visited:
