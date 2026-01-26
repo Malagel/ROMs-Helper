@@ -4,15 +4,30 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>RomsHelper</string>
+    <string>ROMsHelper</string>
 
     <key>CFBundleIdentifier</key>
     <string>com.example.romshelper</string>
 
     <key>CFBundleExecutable</key>
-    <string>RomsHelperLauncher</string>
+    <string>ROMsHelperLauncher</string>
 
     <key>CFBundlePackageType</key>
     <string>APPL</string>
+
+    <key>CFBundleVersion</key>
+    <string>1.0</string>
+
+    <key>CFBundleIconFile</key>
+    <string>ROMsHelper</string>
+    
+    <key>LSUIElement</key>
+    <true/>
+
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+
+    <key>LSMinimumSystemVersion</key>
+    <string>10.15</string>
 </dict>
 </plist>

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+APP_DIR="$(cd "$(dirname "$0")" && pwd)"
+open -a Terminal "$APP_DIR/ROMsHelper"
