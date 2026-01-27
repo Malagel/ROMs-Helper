@@ -4,8 +4,8 @@ from core.helpers.text import normalize
 from datetime import datetime
 from pathlib import Path
 
-TITLE_LINE = "=" * 75
-SECTION_LINE = "-" * 75
+TITLE_LINE = "=" * 90
+SECTION_LINE = "-" * 90
 INDENT = " " * 4
 SUB = "▶"
 ITEM = "•"
@@ -15,10 +15,10 @@ def generate_summary_file(path: Path, valid_subfolders: set[str], current_time: 
     
     with summary_path.open("w", encoding="utf-8") as f:
         f.write(f"{TITLE_LINE}\n")
-        f.write("                               ROMS SUMMARY\n")
+        f.write("                                       ROMS SUMMARY\n")
         f.write(f"{TITLE_LINE}\n\n") 
 
-        f.write(f"Summary generated on: {current_time.strftime('%d/%m/%Y at %H:%M:%S')}\n\n")
+        f.write(f"Generated on: {current_time.strftime('%d/%m/%Y at %H:%M:%S')}\n\n")
 
         for console in sorted(p for p in path.iterdir() if p.is_dir()): 
 
