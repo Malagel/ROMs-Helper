@@ -27,7 +27,7 @@ def parse_advanced_flags(choices: list[str], opt: Options) -> None:
             raise AppError("No values entered for '--custom-subfolders' flag.") 
 
         extracted = choices[idx + 1].split(',')
-        custom_subfolders = {sub.replace('_', ' ').strip().lower() for sub in extracted}
+        custom_subfolders = {sub.replace('-', ' ').strip().lower() for sub in extracted}
 
         opt.valid_subfolders.update(custom_subfolders)
 
