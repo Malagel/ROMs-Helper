@@ -81,7 +81,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build binary
-        run: pyinstaller --clean --onefile --paths . --target-architecture universal2 ROMsHelper.py
+        run: pyinstaller --clean --onefile --paths . ROMsHelper.py
       - name: Build macOS icon
         run: |
           mkdir ROMsHelper.iconset
@@ -118,5 +118,5 @@ jobs:
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ROMsHelper-macos
+          name: ROMsHelper-macos-x86_64
           path: package/
