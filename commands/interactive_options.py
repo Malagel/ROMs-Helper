@@ -53,7 +53,7 @@ def get_interactive_options() -> Options:
             break
         print("[ERROR]: Not a valid directory. Try again.\n")
 
-    print("\nSelect the actions to perform, separated with spaces (e.g.: 1 3 5):")
+    print("\nSelect the actions to perform, separated with spaces (e.g.: 1 3 4):")
     print("[1] Detect duplicated games.")
     print("[2] Clean your game names (rename files).")
     print("[3] Generate statistics.")
